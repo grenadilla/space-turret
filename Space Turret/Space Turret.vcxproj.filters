@@ -7,6 +7,12 @@
 		<ClCompile Include="src\main.cpp">
 			<Filter>src</Filter>
 		</ClCompile>
+		<ClCompile Include="src\main.cpp">
+			<Filter>src</Filter>
+		</ClCompile>
+		<ClCompile Include="src\ofApp.cpp">
+			<Filter>src</Filter>
+		</ClCompile>
 		<ClCompile Include="..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\src\ofxBox2d.cpp">
 			<Filter>addons\ofxBox2d\src</Filter>
 		</ClCompile>
@@ -281,6 +287,9 @@
 		</Filter>
 	</ItemGroup>
 	<ItemGroup>
+		<ClInclude Include="src\ofApp.h">
+			<Filter>src</Filter>
+		</ClInclude>
 		<ClInclude Include="src\ofApp.h">
 			<Filter>src</Filter>
 		</ClInclude>
