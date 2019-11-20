@@ -184,7 +184,9 @@
     <PostBuildEvent />
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\main.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="src\ofApp.cpp" />
     <ClCompile Include="..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\src\ofxBox2d.cpp" />
     <ClCompile Include="..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\src\ofxBox2dBaseShape.cpp" />
@@ -255,6 +257,14 @@
     <ClCompile Include="..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\libs\liquidfun\Contributions\Utilities\ConvexDecomposition\b2Polygon.cpp" />
     <ClCompile Include="..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\libs\liquidfun\Contributions\Utilities\ConvexDecomposition\b2Triangle.cpp" />
     <ClCompile Include="..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\libs\Triangle\triangle.cpp" />
+    <ClCompile Include="test\main.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="test\test.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\ofApp.h" />
@@ -347,6 +357,9 @@
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">/D_DEBUG %(AdditionalOptions)</AdditionalOptions>
       <AdditionalIncludeDirectories>$(OF_ROOT)\libs\openFrameworksCompiled\project\vs</AdditionalIncludeDirectories>
     </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="test\tests.runsettings" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ProjectExtensions>
