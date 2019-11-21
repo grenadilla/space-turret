@@ -97,32 +97,32 @@ void ofApp::draw() {
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key) {
-    if (key == OF_KEY_LEFT) {
+    if (key == OF_KEY_LEFT || key == 'a') {
         keys_pressed.left = true;
     }
-    if (key == OF_KEY_RIGHT) {
+    if (key == OF_KEY_RIGHT || key == 'd') {
         keys_pressed.right = true;
     }
-    if (key == OF_KEY_UP) {
+    if (key == OF_KEY_UP || key == 'w') {
         keys_pressed.up = true;
     }
-    if (key == OF_KEY_DOWN) {
+    if (key == OF_KEY_DOWN || key == 's') {
         keys_pressed.down = true;
     }
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-    if (key == OF_KEY_LEFT) {
+    if (key == OF_KEY_LEFT || key == 'a') {
         keys_pressed.left = false;
     }
-    if (key == OF_KEY_RIGHT) {
+    if (key == OF_KEY_RIGHT || key == 'd') {
         keys_pressed.right = false;
     }
-    if (key == OF_KEY_UP) {
+    if (key == OF_KEY_UP || key == 'w') {
         keys_pressed.up = false;
     }
-    if (key == OF_KEY_DOWN) {
+    if (key == OF_KEY_DOWN || key == 's') {
         keys_pressed.down = false;
     }
 }
