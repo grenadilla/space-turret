@@ -17,6 +17,14 @@
       <Configuration>Release</Configuration>
       <Platform>x64</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Test|Win32">
+      <Configuration>Test</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Test|x64">
+      <Configuration>Test</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Condition="'$(WindowsTargetPlatformVersion)'==''">
     <LatestTargetPlatformVersion>$([Microsoft.Build.Utilities.ToolLocationHelper]::GetLatestSDKTargetPlatformVersion('Windows', '10.0'))</LatestTargetPlatformVersion>
@@ -49,6 +57,12 @@
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Test|Win32'">
+    <PlatformToolset>v142</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Test|x64'">
     <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -186,8 +200,12 @@
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Test|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Test|Win32'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="src\ofApp.cpp" />
+    <ClCompile Include="src\ofApp.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Test|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\src\ofxBox2d.cpp" />
     <ClCompile Include="..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\src\ofxBox2dBaseShape.cpp" />
     <ClCompile Include="..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\src\ofxBox2dCircle.cpp" />
@@ -267,7 +285,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\ofApp.h" />
+    <ClInclude Include="src\ofApp.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Test|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\src\ofxBox2d.h" />
     <ClInclude Include="..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\src\ofxBox2dBaseShape.h" />
     <ClInclude Include="..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\src\ofxBox2dCircle.h" />

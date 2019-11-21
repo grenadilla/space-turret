@@ -34,6 +34,4 @@ class ofApp : public ofBaseApp{
             bool up;
             bool down;
         } keys_pressed;
-
-		const double kDegreeRadMult = PI / 180;
 };
