@@ -5,13 +5,16 @@ const double kDegreeRadMult = PI / 180;
 
 constexpr float fps = 60.0;
 
-constexpr int fuel_planet_radius = 70;
-constexpr int ammo_planet_radius = 70;
-constexpr int player_ship_radius = 30;
+constexpr int fuel_planet_radius = 60;
+constexpr int ammo_planet_radius = 60;
+constexpr int player_ship_radius = 20;
 
 const std::pair<int, int> fuel_planet_coord(500, 200);
 const std::pair<int, int> ammo_planet_coord(300, 600);
 const std::pair<int, int> player_start_coord(300, 300);
+
+constexpr int fuel_planet_gravity = 250;
+constexpr int ammo_planet_gravity = 250;
 
 constexpr int max_speed = 10;
 constexpr int engine_force_mult = 20;
@@ -32,15 +35,17 @@ void ofApp::setup(){
     ammo_planet = ofxBox2dCircle();
     player_ship = ofxBox2dCircle();
 
-	//fuel_planet.setPhysics(0.0, 0.0, 0.1);
+	fuel_planet.setPhysics(0.0, 0.0, 0.1);
     fuel_planet.setup(box2d.getWorld(), fuel_planet_coord.first, fuel_planet_coord.second, fuel_planet_radius);
     fuel_planet.body->SetType(b2_staticBody);
 
+	ammo_planet.setPhysics(0.0, 0.0, 0.1);
 	ammo_planet.setup(box2d.getWorld(), ammo_planet_coord.first, ammo_planet_coord.second, ammo_planet_radius);
     ammo_planet.body->SetType(b2_staticBody);
 
 	player_ship.setPhysics(1.0, 0.2, 0.1);
     player_ship.setup(box2d.getWorld(), player_start_coord.first, player_start_coord.second, player_ship_radius);
+    player_ship.setFixedRotation(true);
 }
 
 //--------------------------------------------------------------
@@ -78,6 +83,21 @@ void ofApp::update() {
                                     (max_speed / player_ship.getVelocity().length()));
 		}
     }
+
+	//Calculate gravity force from the planets using inverse square law
+	//Set position vectors first
+    ofVec2f fuel_gravity_force =
+        fuel_planet.getB2DPosition() - player_ship.getB2DPosition();
+    ofVec2f ammo_gravity_force =
+        ammo_planet.getB2DPosition() - player_ship.getB2DPosition();
+    fuel_gravity_force = fuel_planet_gravity *
+                         fuel_gravity_force.getNormalized() /
+                         fuel_gravity_force.lengthSquared();
+    ammo_gravity_force = ammo_planet_gravity *
+                         ammo_gravity_force.getNormalized() /
+                         ammo_gravity_force.lengthSquared();
+
+	player_ship.addForce(fuel_gravity_force + ammo_gravity_force, 1);
 }
 
 //--------------------------------------------------------------
