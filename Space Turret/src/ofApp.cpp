@@ -20,6 +20,10 @@ constexpr int max_speed = 10;
 constexpr int engine_force_mult = 20;
 constexpr int rotate_speed = 5;
 
+constexpr int bullet_speed = 20;
+constexpr int bullet_interval = 10;
+int bullet_timer = 0;
+
 //--------------------------------------------------------------
 void ofApp::setup(){
 	//Background music: Tilt by Avaren https://www.avarenmusic.co/
@@ -57,6 +61,36 @@ void ofApp::setup(){
 void ofApp::update() {
     box2d.update();
 
+	//Shooting
+	if (bullet_timer > 0) {
+        bullet_timer--;
+	}
+
+	if (bullet_timer == 0 && keys_pressed[' ']) {
+        auto new_bullet = std::make_shared<ofxBox2dRect>();
+        ofRectangle bullet_rect(
+                player_ship.getPosition().x,
+				player_ship.getPosition().y + std::sin(player_ship.getRotation() * kDegreeRadMult) * player_ship_radius + 20,
+				10, 2);
+
+		new_bullet->setPhysics(1, 0, 0);
+        new_bullet->setup(box2d.getWorld(), bullet_rect, player_ship.getRotation());
+        new_bullet->body->SetBullet(true);
+
+		b2Vec2 bullet_velocity;
+
+        bullet_velocity.Set(
+            std::cos(player_ship.getRotation() * kDegreeRadMult) * bullet_speed,
+            std::sin(player_ship.getRotation() * kDegreeRadMult) * bullet_speed);
+
+		new_bullet->body->SetLinearVelocity(bullet_velocity);
+
+        bullets.push_back(new_bullet);
+
+		bullet_timer = bullet_interval;
+	}
+	
+	//Movement
     if (keys_pressed[OF_KEY_LEFT] || keys_pressed['a']) {
         player_ship.setRotation(player_ship.getRotation() - rotate_speed);
     }
@@ -111,6 +145,10 @@ void ofApp::draw() {
 
 	ofSetHexColor(0x800080);
     player_ship.draw();
+
+	for (auto bullet : bullets) {
+        bullet->draw();
+	}
 
     ofSetHexColor(0x90d4e3);
 

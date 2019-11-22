@@ -4,6 +4,8 @@
 #include "ofxBox2d.h"
 #include <cmath>
 #include <map>
+#include <vector>
+#include <memory>
 
 class ofApp : public ofBaseApp{
 
@@ -30,6 +32,8 @@ class ofApp : public ofBaseApp{
 		ofxBox2dCircle fuel_planet;
         ofxBox2dCircle ammo_planet;
         ofxBox2dCircle player_ship;
+
+		std::vector<std::shared_ptr<ofxBox2dRect>> bullets;
 
 		std::map<int, bool> keys_pressed;
 };

@@ -14,3 +14,5 @@
     - Added gravity to planets
 	- Added background music
 	- Still need to add scaling with window resize/fullscreen
+	- Start adding bullets
+	  - Still need to fix collision and spawning
