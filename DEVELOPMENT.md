@@ -7,3 +7,7 @@
  - **11/19/19** Got Box2D working
    - Created simple circular planets
    - Created movable ship with arrow button controls
+
+   **11/20/19** Added WASD movement
+
+   **11/21/19** Added gravity to planets
