@@ -9,19 +9,24 @@ constexpr int fuel_planet_radius = 60;
 constexpr int ammo_planet_radius = 60;
 constexpr int player_ship_radius = 20;
 
-const std::pair<int, int> fuel_planet_coord(500, 200);
-const std::pair<int, int> ammo_planet_coord(300, 600);
-const std::pair<int, int> player_start_coord(300, 300);
+const std::pair<int, int> fuel_planet_coord(700, 300);
+const std::pair<int, int> ammo_planet_coord(200, 300);
+const std::pair<int, int> player_start_coord(400, 300);
 
 constexpr int fuel_planet_gravity = 250;
 constexpr int ammo_planet_gravity = 250;
 
 constexpr int max_speed = 10;
 constexpr int engine_force_mult = 20;
-constexpr int rotate_speed = 3;
+constexpr int rotate_speed = 5;
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+	//Background music: Tilt by Avaren https://www.avarenmusic.co/
+    background_music.load("Tilt.mp3");
+    background_music.play();
+    background_music.setLoop(true);
+
     ofSetVerticalSync(true);
     ofBackground(0, 0, 0);
     ofSetLogLevel(OF_LOG_NOTICE);

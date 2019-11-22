@@ -24,6 +24,8 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 		
+		ofSoundPlayer background_music;
+
 		ofxBox2d box2d;
 		ofxBox2dCircle fuel_planet;
         ofxBox2dCircle ammo_planet;

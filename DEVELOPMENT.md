@@ -10,4 +10,7 @@
 
    **11/20/19** Added WASD movement
 
-   **11/21/19** Added gravity to planets
+   **11/21/19**
+    - Added gravity to planets
+	- Added background music
+	- Still need to add scaling with window resize/fullscreen
