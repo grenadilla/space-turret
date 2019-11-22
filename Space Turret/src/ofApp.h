@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "ofxBox2d.h"
 #include <cmath>
+#include <map>
 
 class ofApp : public ofBaseApp{
 
@@ -28,10 +29,5 @@ class ofApp : public ofBaseApp{
         ofxBox2dCircle ammo_planet;
         ofxBox2dCircle player_ship;
 
-		struct KeysPressed {
-            bool left;
-            bool right;
-            bool up;
-            bool down;
-        } keys_pressed;
+		std::map<int, bool> keys_pressed;
 };

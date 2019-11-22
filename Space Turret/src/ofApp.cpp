@@ -47,17 +47,17 @@ void ofApp::setup(){
 void ofApp::update() {
     box2d.update();
 
-    if (keys_pressed.left) {
+    if (keys_pressed[OF_KEY_LEFT] || keys_pressed['a']) {
         player_ship.setRotation(player_ship.getRotation() - rotate_speed);
     }
-    if (keys_pressed.right) {
+    if (keys_pressed[OF_KEY_RIGHT] || keys_pressed['d']) {
         player_ship.setRotation(player_ship.getRotation() + rotate_speed);
     }
-    if (keys_pressed.up || keys_pressed.down) {
+    if (keys_pressed[OF_KEY_UP] || keys_pressed[OF_KEY_DOWN] || keys_pressed['w'] || keys_pressed['s']) {
         int scalar_mult;
-        if (keys_pressed.up) {
+        if (keys_pressed[OF_KEY_UP] || keys_pressed['w']) {
             scalar_mult = engine_force_mult;
-        } else {
+        } else if (keys_pressed[OF_KEY_DOWN] || keys_pressed['s']) {
             scalar_mult = -1 * engine_force_mult;
         }
 
@@ -96,36 +96,10 @@ void ofApp::draw() {
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key) {
-    if (key == OF_KEY_LEFT || key == 'a') {
-        keys_pressed.left = true;
-    }
-    if (key == OF_KEY_RIGHT || key == 'd') {
-        keys_pressed.right = true;
-    }
-    if (key == OF_KEY_UP || key == 'w') {
-        keys_pressed.up = true;
-    }
-    if (key == OF_KEY_DOWN || key == 's') {
-        keys_pressed.down = true;
-    }
-}
+void ofApp::keyPressed(int key) { keys_pressed[key] = true; }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key){
-    if (key == OF_KEY_LEFT || key == 'a') {
-        keys_pressed.left = false;
-    }
-    if (key == OF_KEY_RIGHT || key == 'd') {
-        keys_pressed.right = false;
-    }
-    if (key == OF_KEY_UP || key == 'w') {
-        keys_pressed.up = false;
-    }
-    if (key == OF_KEY_DOWN || key == 's') {
-        keys_pressed.down = false;
-    }
-}
+void ofApp::keyReleased(int key) { keys_pressed[key] = false; }
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y ){
