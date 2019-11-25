@@ -1,4 +1,5 @@
 #include "ofApp.h"
+#include "calculations.h"
 #include <iostream>
 
 const double kDegreeRadMult = PI / 180;
@@ -127,15 +128,11 @@ void ofApp::update() {
 	//Calculate gravity force from the planets using inverse square law
 	//Set position vectors first
     ofVec2f fuel_gravity_force =
-        fuel_planet.getB2DPosition() - player_ship.getB2DPosition();
+        calc::gravity(fuel_planet_gravity, player_ship.getB2DPosition(),
+                      fuel_planet.getB2DPosition());
     ofVec2f ammo_gravity_force =
-        ammo_planet.getB2DPosition() - player_ship.getB2DPosition();
-    fuel_gravity_force = fuel_planet_gravity *
-                         fuel_gravity_force.getNormalized() /
-                         fuel_gravity_force.lengthSquared();
-    ammo_gravity_force = ammo_planet_gravity *
-                         ammo_gravity_force.getNormalized() /
-                         ammo_gravity_force.lengthSquared();
+        calc::gravity(ammo_planet_gravity, player_ship.getB2DPosition(),
+                      ammo_planet.getB2DPosition());
 
 	player_ship.addForce(fuel_gravity_force + ammo_gravity_force, 1);
 }
