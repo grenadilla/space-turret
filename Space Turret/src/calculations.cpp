@@ -6,6 +6,6 @@ namespace calc {
 		ofVec2f gravity_force = planet_position - player_position;
             gravity_force =
                 gravity_force.getNormalized() / gravity_force.lengthSquared();
-            return gravity_force;
+            return gravity_force * multiplier;
         }
 }

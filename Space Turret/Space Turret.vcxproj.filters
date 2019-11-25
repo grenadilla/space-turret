@@ -226,7 +226,7 @@
     <ClCompile Include="test\main.cpp">
       <Filter>test</Filter>
     </ClCompile>
-    <ClCompile Include="calculations.cpp">
+    <ClCompile Include="src\calculations.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
@@ -536,7 +536,7 @@
     <ClInclude Include="..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\libs\Triangle\triangle.h">
       <Filter>addons\ofxBox2d\libs\Triangle</Filter>
     </ClInclude>
-    <ClInclude Include="calculations.h">
+    <ClInclude Include="src\calculations.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
