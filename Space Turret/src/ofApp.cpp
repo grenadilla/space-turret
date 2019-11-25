@@ -21,6 +21,7 @@ constexpr int engine_force_mult = 20;
 constexpr int rotate_speed = 5;
 
 constexpr int bullet_speed = 20;
+//Maybe track time since last bullet fired
 constexpr int bullet_interval = 10;
 int bullet_timer = 0;
 
