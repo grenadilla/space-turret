@@ -3,7 +3,7 @@
 #include "ofMain.h"
 #include "ofxBox2d.h"
 #include <cmath>
-#include <map>
+#include <set>
 #include <vector>
 #include <memory>
 
@@ -36,5 +36,5 @@ class ofApp : public ofBaseApp{
 		std::vector<std::shared_ptr<ofxBox2dRect>> bullets;
 
 		//Look into sets
-		std::map<int, bool> keys_pressed;
+		std::set<int> keys_pressed;
 };

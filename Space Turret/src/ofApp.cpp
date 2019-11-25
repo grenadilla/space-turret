@@ -68,7 +68,7 @@ void ofApp::update() {
         bullet_timer--;
 	}
 
-	if (bullet_timer == 0 && keys_pressed[' ']) {
+	if (bullet_timer == 0 && keys_pressed.count(' ')) {
         auto new_bullet = std::make_shared<ofxBox2dRect>();
         ofRectangle bullet_rect(
                 player_ship.getPosition().x,
@@ -93,17 +93,24 @@ void ofApp::update() {
 	}
 	
 	//Movement
-    if (keys_pressed[OF_KEY_LEFT] || keys_pressed['a']) {
+	// std::set::count returns number of occurences, which is always zero 
+	// or one, so we can use it as a boolean for easier readbility
+	// than using std::set::find and comparing to std::set::end
+    if (keys_pressed.count(OF_KEY_LEFT) || keys_pressed.count('a')) {
         player_ship.setRotation(player_ship.getRotation() - rotate_speed);
     }
-    if (keys_pressed[OF_KEY_RIGHT] || keys_pressed['d']) {
+
+    if (keys_pressed.count(OF_KEY_RIGHT) || keys_pressed.count('d')) {
         player_ship.setRotation(player_ship.getRotation() + rotate_speed);
     }
-    if (keys_pressed[OF_KEY_UP] || keys_pressed[OF_KEY_DOWN] || keys_pressed['w'] || keys_pressed['s']) {
+
+    if (keys_pressed.count(OF_KEY_UP) || keys_pressed.count(OF_KEY_DOWN) ||
+        keys_pressed.count('w') || keys_pressed.count('s')) {
+
         int scalar_mult;
-        if (keys_pressed[OF_KEY_UP] || keys_pressed['w']) {
+        if (keys_pressed.count(OF_KEY_UP) || keys_pressed.count('w')) {
             scalar_mult = engine_force_mult;
-        } else if (keys_pressed[OF_KEY_DOWN] || keys_pressed['s']) {
+        } else if (keys_pressed.count(OF_KEY_DOWN) || keys_pressed.count('s')) {
             scalar_mult = -1 * engine_force_mult;
         }
 
@@ -157,10 +164,10 @@ void ofApp::draw() {
 }
 
 //--------------------------------------------------------------
-void ofApp::keyPressed(int key) { keys_pressed[key] = true; }
+void ofApp::keyPressed(int key) { keys_pressed.insert(key); }
 
 //--------------------------------------------------------------
-void ofApp::keyReleased(int key) { keys_pressed[key] = false; }
+void ofApp::keyReleased(int key) { keys_pressed.erase(key); }
 
 //--------------------------------------------------------------
 void ofApp::mouseMoved(int x, int y ){
