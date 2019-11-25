@@ -64,6 +64,7 @@
   </PropertyGroup>
   <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Test|x64'">
     <PlatformToolset>v142</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
@@ -106,6 +107,11 @@
     <OutDir>bin\</OutDir>
     <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
     <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Test|x64'">
+    <OutDir>bin\</OutDir>
+    <IntDir>obj\$(Platform)\$(Configuration)\</IntDir>
+    <TargetName>$(ProjectName)_test</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -197,15 +203,31 @@
     </Link>
     <PostBuildEvent />
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Test|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);src;..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\libs;..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\libs\Box2D;..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\libs\Box2D\Collision;..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\libs\Box2D\Collision\Shapes;..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\libs\Box2D\Common;..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\libs\Box2D\Dynamics;..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\libs\Box2D\Dynamics\Contacts;..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\libs\Box2D\Dynamics\Joints;..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\libs\Box2D\Particle;..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\libs\Box2D\Rope;..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\libs\Triangle;..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\libs\liquidfun;..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\libs\liquidfun\Contributions;..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\libs\liquidfun\Contributions\Enhancements;..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\libs\liquidfun\Contributions\Enhancements\FixedPoint;..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\libs\liquidfun\Contributions\Utilities;..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\libs\liquidfun\Contributions\Utilities\ConvexDecomposition;..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\src</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Test|x64'">
+    <ClCompile>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <WarningLevel>Level3</WarningLevel>
+    </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>atlthunk.lib;msvcrt;libcmt;LIBC;LIBCMTD</IgnoreSpecificDefaultLibraries>
+    </Link>
+  </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\calculations.cpp" />
     <ClCompile Include="src\main.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Test|x64'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Test|Win32'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="src\ofApp.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Test|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Test|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\src\ofxBox2d.cpp" />
     <ClCompile Include="..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\src\ofxBox2dBaseShape.cpp" />
@@ -278,17 +300,17 @@
     <ClCompile Include="..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\libs\Triangle\triangle.cpp" />
     <ClCompile Include="test\main.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="test\test.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\calculations.h" />
     <ClInclude Include="src\ofApp.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Test|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Test|x64'">false</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\src\ofxBox2d.h" />
     <ClInclude Include="..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\src\ofxBox2dBaseShape.h" />

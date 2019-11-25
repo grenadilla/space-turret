@@ -223,11 +223,11 @@
     <ClCompile Include="test\test.cpp">
       <Filter>test</Filter>
     </ClCompile>
-    <ClCompile Include="test\main.cpp">
-      <Filter>test</Filter>
-    </ClCompile>
     <ClCompile Include="src\calculations.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="test\main.cpp">
+      <Filter>test</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
