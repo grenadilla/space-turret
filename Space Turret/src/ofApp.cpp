@@ -21,6 +21,9 @@ constexpr int max_speed = 10;
 constexpr int engine_force_mult = 20;
 constexpr int rotate_speed = 5;
 
+constexpr int bullet_height = 10;
+constexpr int bullet_width = 4;
+
 constexpr int bullet_speed = 20;
 //Maybe track time since last bullet fired
 constexpr int bullet_interval = 10;
@@ -63,6 +66,16 @@ void ofApp::setup(){
 void ofApp::update() {
     box2d.update();
 
+	//Remove out of bounds bullets
+	for (int i = 0; i < bullets.size(); i++) {
+        ofVec2f position = bullets[i]->getPosition();
+            if (position.x < 0 || position.x > ofGetWindowWidth() ||
+                position.y < 0 || position.y > ofGetWindowHeight()) {
+				bullets.erase(bullets.begin() + i);
+				i--;
+			}
+	}
+
 	//Shooting
 	if (bullet_timer > 0) {
         bullet_timer--;
@@ -70,11 +83,16 @@ void ofApp::update() {
 
 	if (bullet_timer == 0 && keys_pressed.count(' ')) {
         auto new_bullet = std::make_shared<ofxBox2dRect>();
-        ofRectangle bullet_rect(
-                player_ship.getPosition().x,
-				player_ship.getPosition().y + std::sin(player_ship.getRotation() * kDegreeRadMult) * player_ship_radius + 20,
-				10, 2);
 
+        ofRectangle bullet_rect(
+            player_ship.getPosition().x +
+                std::cos(player_ship.getRotation() * kDegreeRadMult) * player_ship_radius,
+            player_ship.getPosition().y +
+                std::sin(player_ship.getRotation() * kDegreeRadMult) *
+                    player_ship_radius,
+				bullet_height, bullet_width);
+
+		//Bullets need to have mass or else they are treated like static unmovable objects
 		new_bullet->setPhysics(1, 0, 0);
         new_bullet->setup(box2d.getWorld(), bullet_rect, player_ship.getRotation());
         new_bullet->body->SetBullet(true);
@@ -133,7 +151,6 @@ void ofApp::update() {
     }
 
 	//Calculate gravity force from the planets using inverse square law
-	//Set position vectors first
     ofVec2f fuel_gravity_force =
         calc::gravity(fuel_planet_gravity, player_ship.getB2DPosition(),
                       fuel_planet.getB2DPosition());
