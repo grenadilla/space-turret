@@ -26,6 +26,7 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 		
+	private:
 		ofSoundPlayer background_music;
 
 		ofxBox2d box2d;
@@ -35,6 +36,8 @@ class ofApp : public ofBaseApp{
 
 		std::vector<std::shared_ptr<ofxBox2dRect>> bullets;
 
-		//Look into sets
 		std::set<int> keys_pressed;
+
+		void removeBullets();
+        void shootBullet();
 };

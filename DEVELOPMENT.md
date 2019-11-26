@@ -16,3 +16,9 @@
 	- Still need to add scaling with window resize/fullscreen
 	- Start adding bullets
 	  - Still need to fix collision and spawning
+
+   **11/25/19**
+    - Fix bullet spawn position
+	- Bullets are now removed when out of bounds
+	  - Still need to remove when colliding with planets
+	- Make code more readable
