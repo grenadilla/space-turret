@@ -2,6 +2,7 @@
 
 #include "ofMain.h"
 #include "ofxBox2d.h"
+#include "planet.h"
 #include <cmath>
 #include <set>
 #include <vector>
@@ -30,8 +31,10 @@ class ofApp : public ofBaseApp{
 		ofSoundPlayer background_music;
 
 		ofxBox2d box2d;
-		ofxBox2dCircle fuel_planet;
-        ofxBox2dCircle ammo_planet;
+
+		shared_ptr<Planet> fuel_planet;
+        shared_ptr<Planet> ammo_planet;
+
         ofxBox2dCircle player_ship;
 
 		std::vector<std::shared_ptr<ofxBox2dRect>> bullets;

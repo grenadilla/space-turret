@@ -229,6 +229,9 @@
     <ClCompile Include="test\main.cpp">
       <Filter>test</Filter>
     </ClCompile>
+    <ClCompile Include="src\planet.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -537,6 +540,9 @@
       <Filter>addons\ofxBox2d\libs\Triangle</Filter>
     </ClInclude>
     <ClInclude Include="src\calculations.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\planet.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
