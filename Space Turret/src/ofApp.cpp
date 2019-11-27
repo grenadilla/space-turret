@@ -158,30 +158,10 @@ void ofApp::removeBullets() {
 }
 
 void ofApp::shootBullet() {
-    auto new_bullet = std::make_shared<ofxBox2dRect>();
-
-    ofRectangle bullet_rect(
-        player_ship.getPosition().x +
-            std::cos(player_ship.getRotation() * kDegreeRadMult) *
-                player_ship_radius,
-        player_ship.getPosition().y +
-            std::sin(player_ship.getRotation() * kDegreeRadMult) *
-                player_ship_radius,
-        bullet_height, bullet_width);
-
-    // Bullets need to have mass or else they are treated like static unmovable
-    // objects
-    new_bullet->setPhysics(1, 0, 0);
-    new_bullet->setup(box2d.getWorld(), bullet_rect, player_ship.getRotation());
-    new_bullet->body->SetBullet(true);
-
-    b2Vec2 bullet_velocity;
-
-    bullet_velocity.Set(
-        std::cos(player_ship.getRotation() * kDegreeRadMult) * bullet_speed,
-        std::sin(player_ship.getRotation() * kDegreeRadMult) * bullet_speed);
-
-    new_bullet->body->SetLinearVelocity(bullet_velocity);
+    auto new_bullet = std::make_shared<Bullet>(box2d.getWorld(), 
+		player_ship.getPosition().x, player_ship.getPosition().y, 
+		bullet_height, bullet_width, player_ship_radius, player_ship.getRotation(),
+		bullet_speed);
 
     bullets.push_back(new_bullet);
 }

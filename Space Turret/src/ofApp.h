@@ -2,7 +2,10 @@
 
 #include "ofMain.h"
 #include "ofxBox2d.h"
+
 #include "planet.h"
+#include "bullet.h"
+
 #include <cmath>
 #include <set>
 #include <vector>
@@ -37,7 +40,7 @@ class ofApp : public ofBaseApp{
 
         ofxBox2dCircle player_ship;
 
-		std::vector<std::shared_ptr<ofxBox2dRect>> bullets;
+		std::vector<std::shared_ptr<Bullet>> bullets;
 
 		std::set<int> keys_pressed;
 
