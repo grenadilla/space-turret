@@ -56,6 +56,8 @@ void ofApp::setup() {
     player_ship.setPhysics(1.0, 0.2, 0.1);
     player_ship.setup(box2d.getWorld(), player_start_coord.first,
                       player_start_coord.second, player_ship_radius);
+
+	//Set fixed rotation so player ship doesn't roll around with friction
     player_ship.setFixedRotation(true);
 }
 
@@ -90,6 +92,7 @@ void ofApp::update() {
 
     if (keys_pressed.count(OF_KEY_UP) || keys_pressed.count(OF_KEY_DOWN) ||
         keys_pressed.count('w') || keys_pressed.count('s')) {
+
         int scalar_mult;
         if (keys_pressed.count(OF_KEY_UP) || keys_pressed.count('w')) {
             scalar_mult = engine_force_mult;
@@ -141,12 +144,12 @@ void ofApp::draw() {
 
     ofSetHexColor(0x90d4e3);
 
-    // Can draw circles with .draw() for debug or next one for release
     ammo_planet->draw();
     fuel_planet->draw();
 }
 
 void ofApp::removeBullets() {
+	//Remove bullets if out of bounds
     for (int i = 0; i < bullets.size(); i++) {
         ofVec2f position = bullets[i]->getPosition();
         if (position.x < 0 || position.x > ofGetWindowWidth() ||
