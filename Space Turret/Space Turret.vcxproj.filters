@@ -235,6 +235,9 @@
     <ClCompile Include="src\bullet.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\identifier.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -551,7 +554,7 @@
     <ClInclude Include="src\bullet.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\spaceType.h">
+    <ClInclude Include="src\identifier.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,6 +1,7 @@
 #include "ofApp.h"
 #include <iostream>
 #include "calculations.h"
+#include "identifier.h"
 
 const double kDegreeRadMult = PI / 180;
 
@@ -44,6 +45,9 @@ void ofApp::setup() {
     box2d.setGravity(0, 0);
     box2d.setFPS(fps);
     box2d.registerGrabbing();
+    box2d.enableEvents();
+
+    ofAddListener(box2d.contactStartEvents, this, &ofApp::contactStart);
 
     fuel_planet = make_shared<Planet>(box2d.getWorld(), fuel_planet_coord.first,
                          fuel_planet_coord.second, fuel_planet_radius);
@@ -51,14 +55,19 @@ void ofApp::setup() {
 	ammo_planet = make_shared<Planet>(box2d.getWorld(), ammo_planet_coord.first,
                             ammo_planet_coord.second, ammo_planet_radius);
 
-    player_ship = ofxBox2dCircle();
+    player_ship = make_shared<ofxBox2dCircle>();
 
-    player_ship.setPhysics(1.0, 0.2, 0.1);
-    player_ship.setup(box2d.getWorld(), player_start_coord.first,
+    player_ship->setPhysics(1.0, 0.2, 0.1);
+    player_ship->setup(box2d.getWorld(), player_start_coord.first,
                       player_start_coord.second, player_ship_radius);
 
+	Identifier *player_identifier =
+        new Identifier(Identifier::ShapeType::Player, player_ship.get());
+
+    player_ship->body->SetUserData(player_identifier);
+
 	//Set fixed rotation so player ship doesn't roll around with friction
-    player_ship.setFixedRotation(true);
+    player_ship->setFixedRotation(true);
 }
 
 //--------------------------------------------------------------
@@ -83,11 +92,11 @@ void ofApp::update() {
     // or one, so we can use it as a boolean for easier readbility
     // than using std::set::find and comparing to std::set::end
     if (keys_pressed.count(OF_KEY_LEFT) || keys_pressed.count('a')) {
-        player_ship.setRotation(player_ship.getRotation() - rotate_speed);
+        player_ship->setRotation(player_ship->getRotation() - rotate_speed);
     }
 
     if (keys_pressed.count(OF_KEY_RIGHT) || keys_pressed.count('d')) {
-        player_ship.setRotation(player_ship.getRotation() + rotate_speed);
+        player_ship->setRotation(player_ship->getRotation() + rotate_speed);
     }
 
     if (keys_pressed.count(OF_KEY_UP) || keys_pressed.count(OF_KEY_DOWN) ||
@@ -104,31 +113,50 @@ void ofApp::update() {
         // radians
         ofVec2f force_vec;
         force_vec.set(
-            std::cos(player_ship.getRotation() * kDegreeRadMult) * scalar_mult,
-            std::sin(player_ship.getRotation() * kDegreeRadMult) * scalar_mult);
+            std::cos(player_ship->getRotation() * kDegreeRadMult) * scalar_mult,
+            std::sin(player_ship->getRotation() * kDegreeRadMult) * scalar_mult);
 
-        player_ship.addForce(force_vec, 1);
+        player_ship->addForce(force_vec, 1);
 
         // Enforce max velocity
-        if (player_ship.getVelocity().length() > max_speed) {
+        if (player_ship->getVelocity().length() > max_speed) {
             // Rescale vectors using this equation:
             // new_vector = required_length/old_magnitude * old_vector
 
-            player_ship.setVelocity(
-                player_ship.getVelocity() *
-                (max_speed / player_ship.getVelocity().length()));
+            player_ship->setVelocity(
+                player_ship->getVelocity() *
+                (max_speed / player_ship->getVelocity().length()));
         }
     }
 
     // Calculate gravity force from the planets using inverse square law
     ofVec2f fuel_gravity_force =
-        calc::gravity(fuel_planet_gravity, player_ship.getB2DPosition(),
+        calc::gravity(fuel_planet_gravity, player_ship->getB2DPosition(),
                       fuel_planet->getB2DPosition());
     ofVec2f ammo_gravity_force =
-        calc::gravity(ammo_planet_gravity, player_ship.getB2DPosition(),
+        calc::gravity(ammo_planet_gravity, player_ship->getB2DPosition(),
                       ammo_planet->getB2DPosition());
 
-    player_ship.addForce(fuel_gravity_force + ammo_gravity_force, 1);
+    player_ship->addForce(fuel_gravity_force + ammo_gravity_force, 1);
+}
+
+void ofApp::contactStart(ofxBox2dContactArgs& e) { 
+    Identifier *id_a = static_cast<Identifier*>(e.a->GetBody()->GetUserData());
+    Identifier *id_b = static_cast<Identifier*>(e.b->GetBody()->GetUserData());
+
+	if (id_a->GetType() == Identifier::ShapeType::Bullet &&
+        id_b->GetType() == Identifier::ShapeType::Planet) {
+        shared_ptr<Bullet> bullet =
+            std::static_pointer_cast<Bullet>(id_a->GetShape());
+        bullet->SetCollided(true);
+	}
+
+	if (id_b->GetType() == Identifier::ShapeType::Bullet &&
+        id_a->GetType() == Identifier::ShapeType::Planet) {
+		shared_ptr<Bullet> bullet =
+            std::static_pointer_cast<Bullet>(id_b->GetShape());
+        bullet->SetCollided(true);
+    }
 }
 
 //--------------------------------------------------------------
@@ -136,7 +164,7 @@ void ofApp::draw() {
     ofFill();
 
     ofSetHexColor(0x800080);
-    player_ship.draw();
+    player_ship->draw();
 
     for (auto bullet : bullets) {
         bullet->draw();
@@ -149,11 +177,12 @@ void ofApp::draw() {
 }
 
 void ofApp::removeBullets() {
-	//Remove bullets if out of bounds
+	//Remove bullets if out of bounds or collided
     for (int i = 0; i < bullets.size(); i++) {
         ofVec2f position = bullets[i]->getPosition();
         if (position.x < 0 || position.x > ofGetWindowWidth() ||
-            position.y < 0 || position.y > ofGetWindowHeight()) {
+            position.y < 0 || position.y > ofGetWindowHeight() ||
+			bullets[i]->DidCollide()) {
             bullets.erase(bullets.begin() + i);
             i--;
         }
@@ -162,8 +191,8 @@ void ofApp::removeBullets() {
 
 void ofApp::shootBullet() {
     auto new_bullet = std::make_shared<Bullet>(box2d.getWorld(), 
-		player_ship.getPosition().x, player_ship.getPosition().y, 
-		bullet_height, bullet_width, player_ship_radius, player_ship.getRotation(),
+		player_ship->getPosition().x, player_ship->getPosition().y, 
+		bullet_height, bullet_width, player_ship_radius, player_ship->getRotation(),
 		bullet_speed);
 
     bullets.push_back(new_bullet);

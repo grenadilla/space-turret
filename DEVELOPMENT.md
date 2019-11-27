@@ -26,3 +26,5 @@
    **11/26/19**
     - Make Planet its own subclass of ofxBox2dCircle
 	- Make Bullet its own subclass of ofxBox2dRect
+	- Create Identifier class for collision detection
+	- Make bullets disappear after hitting planets

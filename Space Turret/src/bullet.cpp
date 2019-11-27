@@ -1,5 +1,6 @@
 #include "bullet.h"
 
+#include "identifier.h"
 #include "ofMain.h"
 
 const double kDegreeRadMult = PI / 180;
@@ -8,6 +9,7 @@ Bullet::Bullet() = default;
 
 Bullet::Bullet(b2World *b2World, int x, int y, int height, int width, int player_ship_radius, float rotation,
 	int bullet_speed, float density) {
+    collided = false;
 
 	//Create rectangular outline of bullet
     ofRectangle bullet_rect(
@@ -27,6 +29,10 @@ Bullet::Bullet(b2World *b2World, int x, int y, int height, int width, int player
         std::cos(rotation * kDegreeRadMult) * bullet_speed,
         std::sin(rotation * kDegreeRadMult) * bullet_speed);
     body->SetLinearVelocity(bullet_velocity);
+
+	body->SetUserData(new Identifier(Identifier::ShapeType::Bullet, this));
 }
 
-SpaceType Bullet::GetType() { return SpaceType::Bullet; }
+void Bullet::SetCollided(bool collided) { this->collided = collided; }
+
+bool Bullet::DidCollide() { return collided; }

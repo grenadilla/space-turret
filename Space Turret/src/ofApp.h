@@ -29,6 +29,9 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
+
+		void contactStart(ofxBox2dContactArgs &e);
+        void contactEnd(ofxBox2dContactArgs &e);
 		
 	private:
 		ofSoundPlayer background_music;
@@ -38,7 +41,7 @@ class ofApp : public ofBaseApp{
 		shared_ptr<Planet> fuel_planet;
         shared_ptr<Planet> ammo_planet;
 
-        ofxBox2dCircle player_ship;
+        shared_ptr<ofxBox2dCircle> player_ship;
 
 		std::vector<std::shared_ptr<Bullet>> bullets;
 
