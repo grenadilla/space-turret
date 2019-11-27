@@ -551,6 +551,9 @@
     <ClInclude Include="src\bullet.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\spaceType.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="icon.rc" />

@@ -13,3 +13,5 @@ Planet::Planet(b2World *b2dWorld, int x, int y, int radius, float density,
     body->SetType(b2_staticBody);
 }
 
+SpaceType Planet::GetType() { return SpaceType::Planet; }
+

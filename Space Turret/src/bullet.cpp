@@ -28,3 +28,5 @@ Bullet::Bullet(b2World *b2World, int x, int y, int height, int width, int player
         std::sin(rotation * kDegreeRadMult) * bullet_speed);
     body->SetLinearVelocity(bullet_velocity);
 }
+
+SpaceType Bullet::GetType() { return SpaceType::Bullet; }
