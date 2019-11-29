@@ -28,3 +28,6 @@
 	- Make Bullet its own subclass of ofxBox2dRect
 	- Create Identifier class for collision detection
 	- Make bullets disappear after hitting planets
+
+   **11/28/19**
+    - Fix memory leak by preloading bullets

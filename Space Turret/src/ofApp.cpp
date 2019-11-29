@@ -25,8 +25,10 @@ constexpr int rotate_speed = 5;
 constexpr int bullet_height = 10;
 constexpr int bullet_width = 4;
 
+//Number of bullets to preload
 constexpr int total_bullets = 30;
 constexpr int bullet_speed = 20;
+
 // Maybe track time since last bullet fired
 constexpr int bullet_interval = 10;
 int bullet_timer = 0;
@@ -65,14 +67,14 @@ void ofApp::setup() {
 	//Set up bullets
     bullet_index = 0;
     for (int i = 0; i < total_bullets; i++) {
-        makeBullet();
+        auto new_bullet = std::make_shared<Bullet>(box2d.getWorld(),
+                                                   bullet_height, bullet_width);
+
+        bullets.push_back(new_bullet);
 	}
-    bullet_index = 0;
 
-	Identifier *player_identifier =
-        new Identifier(Identifier::ShapeType::Player, player_ship.get());
-
-    player_ship->body->SetUserData(player_identifier);
+    player_ship->setData(
+            new Identifier(Identifier::ShapeType::Player, player_ship.get()));
 
 	//Set fixed rotation so player ship doesn't roll around with friction
     player_ship->setFixedRotation(true);
@@ -203,13 +205,6 @@ void ofApp::removeBullets() {
             bullets[i]->Reset();
         }
     }
-}
-
-void ofApp::makeBullet() {
-    auto new_bullet = std::make_shared<Bullet>(box2d.getWorld(), 
-		bullet_height, bullet_width);
-
-    bullets.push_back(new_bullet);
 }
 
 //--------------------------------------------------------------
