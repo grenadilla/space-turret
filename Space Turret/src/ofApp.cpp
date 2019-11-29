@@ -190,6 +190,20 @@ void ofApp::contactStart(ofxBox2dContactArgs& e) {
         bullet->SetCollided(true);
     }
 
+	if (id_a->GetType() == Identifier::ShapeType::Enemy &&
+        id_b->GetType() == Identifier::ShapeType::Planet) {
+        shared_ptr<Enemy> enemy =
+            std::static_pointer_cast<Enemy>(id_a->GetShape());
+        enemy->SetCollided(true);
+    }
+
+    if (id_b->GetType() == Identifier::ShapeType::Enemy &&
+        id_a->GetType() == Identifier::ShapeType::Planet) {
+        shared_ptr<Bullet> enemy =
+            std::static_pointer_cast<Bullet>(id_b->GetShape());
+        enemy->SetCollided(true);
+    }
+
 	if (id_a->GetType() == Identifier::ShapeType::Bullet &&
         id_b->GetType() == Identifier::ShapeType::Enemy) {
         shared_ptr<Bullet> bullet =
