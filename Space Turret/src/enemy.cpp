@@ -61,11 +61,6 @@ void Enemy::Reset() {
     collided = false;
     body->SetActive(false);
     body->SetLinearVelocity({0, 0});
+    body->SetAngularVelocity(0);
     setPosition(x_hiding, y_hiding);
 }
-
-void Enemy::SetCollided(bool collided) { this->collided = collided; }
-
-bool Enemy::DidCollide() { return collided; }
-
-bool Enemy::IsInUse() { return in_use; }

@@ -51,11 +51,6 @@ void Bullet::Reset() {
     collided = false;
     body->SetActive(false);
     body->SetLinearVelocity({0, 0});
+    body->SetAngularVelocity(0);
     setPosition(x_hiding, y_hiding);
 }
-
-void Bullet::SetCollided(bool collided) { this->collided = collided; }
-
-bool Bullet::DidCollide() { return collided; }
-
-bool Bullet::IsInUse() { return in_use; }

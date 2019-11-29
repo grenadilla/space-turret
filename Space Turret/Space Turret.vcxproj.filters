@@ -241,6 +241,9 @@
     <ClCompile Include="src\enemy.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\preloaded.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -561,6 +564,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\enemy.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\preloaded.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
