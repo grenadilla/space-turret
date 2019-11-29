@@ -9,6 +9,7 @@ class Identifier {
 		Player,
         Planet,
         Bullet,
+		Enemy,
     };
 
         Identifier(ShapeType type, ofxBox2dBaseShape *shape);

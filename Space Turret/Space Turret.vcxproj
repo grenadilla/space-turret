@@ -222,6 +222,7 @@
   <ItemGroup>
     <ClCompile Include="src\bullet.cpp" />
     <ClCompile Include="src\calculations.cpp" />
+    <ClCompile Include="src\enemy.cpp" />
     <ClCompile Include="src\identifier.cpp" />
     <ClCompile Include="src\main.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
@@ -313,6 +314,7 @@
   <ItemGroup>
     <ClInclude Include="src\bullet.h" />
     <ClInclude Include="src\calculations.h" />
+    <ClInclude Include="src\enemy.h" />
     <ClInclude Include="src\identifier.h" />
     <ClInclude Include="src\ofApp.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Test|x64'">false</ExcludedFromBuild>

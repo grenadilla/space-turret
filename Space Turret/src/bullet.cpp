@@ -14,9 +14,6 @@ constexpr int y_hiding = -10;
 Bullet::Bullet() = default;
 
 Bullet::Bullet(b2World *b2World, int height, int width, float density) {
-    collided = false;
-    body->SetActive(false);
-
 	//Create rectangular outline of bullet
     ofRectangle bullet_rect(x_hiding, y_hiding, height, width);
 
@@ -27,13 +24,13 @@ Bullet::Bullet(b2World *b2World, int height, int width, float density) {
     body->SetBullet(true);
 
 	setData(new Identifier(Identifier::ShapeType::Bullet, this));
+
+	collided = false;
+    body->SetActive(false);
 }
 
 void Bullet::Shoot(int x, int y, int player_ship_radius, float rotation,
 	int bullet_speed) {
-    in_use = true;
-    body->SetActive(true);
-
     setPosition(x + std::cos(rotation * kDegreeRadMult) * player_ship_radius,
                 y + std::sin(rotation * kDegreeRadMult) * player_ship_radius);
 
@@ -44,6 +41,9 @@ void Bullet::Shoot(int x, int y, int player_ship_radius, float rotation,
     bullet_velocity.Set(std::cos(rotation * kDegreeRadMult) * bullet_speed,
                         std::sin(rotation * kDegreeRadMult) * bullet_speed);
     body->SetLinearVelocity(bullet_velocity);
+
+	in_use = true;
+    body->SetActive(true);
 }
 
 void Bullet::Reset() { 

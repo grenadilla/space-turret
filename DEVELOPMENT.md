@@ -31,3 +31,6 @@
 
    **11/28/19**
     - Fix memory leak by preloading bullets
+
+   **11/29/19**
+    - Add enemies

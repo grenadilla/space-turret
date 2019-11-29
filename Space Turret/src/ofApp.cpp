@@ -33,6 +33,10 @@ constexpr int bullet_speed = 20;
 constexpr int bullet_interval = 10;
 int bullet_timer = 0;
 
+constexpr int enemy_size = 30;
+constexpr int total_enemies = 15;
+constexpr int enemy_speed = 5;
+
 //--------------------------------------------------------------
 void ofApp::setup() {
     // Background music: Tilt by Avaren https://www.avarenmusic.co/
@@ -73,11 +77,21 @@ void ofApp::setup() {
         bullets.push_back(new_bullet);
 	}
 
+	//Set up enemies
+    enemy_index = 0;
+    for (int i = 0; i < total_enemies; i++) {
+        auto new_enemy = std::make_shared<Enemy>(box2d.getWorld(), enemy_size);
+        enemies.push_back(new_enemy);
+	}	
+
     player_ship->setData(
             new Identifier(Identifier::ShapeType::Player, player_ship.get()));
 
 	//Set fixed rotation so player ship doesn't roll around with friction
     player_ship->setFixedRotation(true);
+
+	enemies[0]->Attack(300, 700, fuel_planet_coord.first, fuel_planet_coord.second,
+                       enemy_speed);
 }
 
 //--------------------------------------------------------------
@@ -86,6 +100,7 @@ void ofApp::update() {
 
     // Remove out of bounds bullets
     removeBullets();
+    removeEnemies();
 
     // Shooting
     if (bullet_timer > 0) {
@@ -174,6 +189,26 @@ void ofApp::contactStart(ofxBox2dContactArgs& e) {
             std::static_pointer_cast<Bullet>(id_b->GetShape());
         bullet->SetCollided(true);
     }
+
+	if (id_a->GetType() == Identifier::ShapeType::Bullet &&
+        id_b->GetType() == Identifier::ShapeType::Enemy) {
+        shared_ptr<Bullet> bullet =
+            std::static_pointer_cast<Bullet>(id_a->GetShape());
+        shared_ptr<Enemy> enemy =
+            std::static_pointer_cast<Enemy>(id_b->GetShape());
+        bullet->SetCollided(true);
+        enemy->SetCollided(true);
+    }
+
+    if (id_b->GetType() == Identifier::ShapeType::Bullet &&
+        id_a->GetType() == Identifier::ShapeType::Enemy) {
+        shared_ptr<Bullet> bullet =
+            std::static_pointer_cast<Bullet>(id_b->GetShape());
+        shared_ptr<Enemy> enemy =
+            std::static_pointer_cast<Enemy>(id_a->GetShape());
+        bullet->SetCollided(true);
+        enemy->SetCollided(true);
+    }
 }
 
 //--------------------------------------------------------------
@@ -187,6 +222,12 @@ void ofApp::draw() {
         if (bullet->IsInUse()) {
             bullet->draw();
 		}
+    }
+
+	for (auto enemy : enemies) {
+        if (enemy->IsInUse()) {
+            enemy->draw();
+        }
     }
 
     ofSetHexColor(0x90d4e3);
@@ -203,6 +244,18 @@ void ofApp::removeBullets() {
             position.y < 0 || position.y > ofGetWindowHeight() ||
 			bullets[i]->DidCollide()) {
             bullets[i]->Reset();
+        }
+    }
+}
+
+void ofApp::removeEnemies() {
+    // Remove bullets if out of bounds or collided
+    for (int i = 0; i < enemies.size(); i++) {
+        ofVec2f position = enemies[i]->getPosition();
+        if (position.x < 0 || position.x > ofGetWindowWidth() ||
+            position.y < 0 || position.y > ofGetWindowHeight() ||
+            enemies[i]->DidCollide()) {
+            enemies[i]->Reset();
         }
     }
 }

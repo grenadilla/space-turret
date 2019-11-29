@@ -5,6 +5,7 @@
 
 #include "planet.h"
 #include "bullet.h"
+#include "enemy.h"
 
 #include <cmath>
 #include <set>
@@ -46,8 +47,11 @@ class ofApp : public ofBaseApp{
 		std::vector<std::shared_ptr<Bullet>> bullets;
         int bullet_index;
 
+		std::vector<std::shared_ptr<Enemy>> enemies;
+        int enemy_index = 0;
+
 		std::set<int> keys_pressed;
 
 		void removeBullets();
-        void makeBullet();
+        void removeEnemies();
 };
