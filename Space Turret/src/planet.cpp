@@ -12,6 +12,5 @@ Planet::Planet(b2World *b2dWorld, int x, int y, int radius, float density,
     setPhysics(density, bounce, friction);
     setup(b2dWorld, x, y, radius);
     body->SetType(b2_staticBody);
-    body->SetUserData(new Identifier(Identifier::ShapeType::Planet, this));
+    setData(new Identifier(Identifier::ShapeType::Planet, this));
 }
-

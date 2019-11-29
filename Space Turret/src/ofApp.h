@@ -44,9 +44,10 @@ class ofApp : public ofBaseApp{
         shared_ptr<ofxBox2dCircle> player_ship;
 
 		std::vector<std::shared_ptr<Bullet>> bullets;
+        int bullet_index;
 
 		std::set<int> keys_pressed;
 
 		void removeBullets();
-        void shootBullet();
+        void makeBullet();
 };

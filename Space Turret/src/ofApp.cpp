@@ -25,6 +25,7 @@ constexpr int rotate_speed = 5;
 constexpr int bullet_height = 10;
 constexpr int bullet_width = 4;
 
+constexpr int total_bullets = 30;
 constexpr int bullet_speed = 20;
 // Maybe track time since last bullet fired
 constexpr int bullet_interval = 10;
@@ -61,6 +62,13 @@ void ofApp::setup() {
     player_ship->setup(box2d.getWorld(), player_start_coord.first,
                       player_start_coord.second, player_ship_radius);
 
+	//Set up bullets
+    bullet_index = 0;
+    for (int i = 0; i < total_bullets; i++) {
+        makeBullet();
+	}
+    bullet_index = 0;
+
 	Identifier *player_identifier =
         new Identifier(Identifier::ShapeType::Player, player_ship.get());
 
@@ -83,7 +91,14 @@ void ofApp::update() {
     }
 
     if (bullet_timer == 0 && keys_pressed.count(' ')) {
-        shootBullet();
+        auto bullet = bullets[bullet_index];
+        bullet->Shoot(player_ship->getPosition().x,
+                      player_ship->getPosition().y, player_ship->getRadius(),
+                      player_ship->getRotation(), bullet_speed);
+        bullet_index++;
+        if (bullet_index >= bullets.size()) {
+            bullet_index = 0;
+		}
         bullet_timer = bullet_interval;
     }
 
@@ -167,7 +182,9 @@ void ofApp::draw() {
     player_ship->draw();
 
     for (auto bullet : bullets) {
-        bullet->draw();
+        if (bullet->IsInUse()) {
+            bullet->draw();
+		}
     }
 
     ofSetHexColor(0x90d4e3);
@@ -183,17 +200,14 @@ void ofApp::removeBullets() {
         if (position.x < 0 || position.x > ofGetWindowWidth() ||
             position.y < 0 || position.y > ofGetWindowHeight() ||
 			bullets[i]->DidCollide()) {
-            bullets.erase(bullets.begin() + i);
-            i--;
+            bullets[i]->Reset();
         }
     }
 }
 
-void ofApp::shootBullet() {
+void ofApp::makeBullet() {
     auto new_bullet = std::make_shared<Bullet>(box2d.getWorld(), 
-		player_ship->getPosition().x, player_ship->getPosition().y, 
-		bullet_height, bullet_width, player_ship_radius, player_ship->getRotation(),
-		bullet_speed);
+		bullet_height, bullet_width);
 
     bullets.push_back(new_bullet);
 }
