@@ -55,6 +55,7 @@ void ofApp::setup() {
     box2d.enableEvents();
 
     ofAddListener(box2d.contactStartEvents, this, &ofApp::contactStart);
+    ofAddListener(box2d.contactEndEvents, this, &ofApp::contactEnd);
 
     fuel_planet = make_shared<Planet>(box2d.getWorld(), fuel_planet_coord.first,
                          fuel_planet_coord.second, fuel_planet_radius);
@@ -73,7 +74,6 @@ void ofApp::setup() {
     for (int i = 0; i < total_bullets; i++) {
         auto new_bullet = std::make_shared<Bullet>(box2d.getWorld(),
                                                    bullet_height, bullet_width);
-
         bullets.push_back(new_bullet);
 	}
 
@@ -91,7 +91,7 @@ void ofApp::setup() {
     player_ship->setFixedRotation(true);
 
 	enemies[0]->Attack(300, 700, fuel_planet_coord.first, fuel_planet_coord.second,
-                       enemy_speed);
+                       enemy_speed, 1);
 }
 
 //--------------------------------------------------------------
@@ -225,7 +225,7 @@ void ofApp::contactStart(ofxBox2dContactArgs& e) {
         shared_ptr<Enemy> enemy =
             std::static_pointer_cast<Enemy>(id_b->GetShape());
         bullet->SetCollided(true);
-        enemy->SetCollided(true);
+        enemy->Damage();
     }
 
     if (id_b->GetType() == Identifier::ShapeType::Bullet &&
@@ -235,7 +235,26 @@ void ofApp::contactStart(ofxBox2dContactArgs& e) {
         shared_ptr<Enemy> enemy =
             std::static_pointer_cast<Enemy>(id_a->GetShape());
         bullet->SetCollided(true);
-        enemy->SetCollided(true);
+        enemy->Damage();
+    }
+}
+
+void ofApp::contactEnd(ofxBox2dContactArgs& e) {
+    Identifier *id_a = static_cast<Identifier *>(e.a->GetBody()->GetUserData());
+    Identifier *id_b = static_cast<Identifier *>(e.b->GetBody()->GetUserData());
+
+    if (id_a->GetType() == Identifier::ShapeType::Bullet &&
+        id_b->GetType() == Identifier::ShapeType::Enemy) {
+        shared_ptr<Enemy> enemy =
+            std::static_pointer_cast<Enemy>(id_b->GetShape());
+        enemy->Retarget();
+    }
+
+    if (id_b->GetType() == Identifier::ShapeType::Bullet &&
+        id_a->GetType() == Identifier::ShapeType::Enemy) {
+        shared_ptr<Enemy> enemy =
+            std::static_pointer_cast<Enemy>(id_a->GetShape());
+        enemy->Retarget();
     }
 }
 

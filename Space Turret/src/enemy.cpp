@@ -31,27 +31,46 @@ Enemy::Enemy(b2World* b2World, int size, float density) {
     body->SetActive(false);
 }
 
-void Enemy::Attack(int x, int y, int target_x, int target_y, int speed) {
-    setPosition(x, y);
-
-    // Get angle in radians, convert to degrees, and set to between 0 and 360
-    int angle = std::atan((double)(target_y - y) / (target_x - x));
-    angle /= kDegreeRadMult;
-    angle = (angle + kDegreeInCircle) % kDegreeInCircle;
-
-    setRotation(angle);
-
-    b2Vec2 velocity(target_x - x, target_y - y);
+b2Vec2 Enemy::GetVelocity() {
+    b2Vec2 velocity(target_x - getPosition().x, target_y - getPosition().y);
     velocity.Normalize();
     velocity *= speed;
+    return velocity;
+}
 
-    body->SetLinearVelocity(velocity);
+int Enemy::GetAngle() {
+    // Get angle in radians, convert to degrees, and set to between 0 and 360
+    int angle = std::atan((double)(target_y - getPosition().y) / (target_x - getPosition().x));
+    angle /= kDegreeRadMult;
+    angle = (angle + kDegreeInCircle) % kDegreeInCircle;
+    return angle;
+}
+
+void Enemy::Retarget() {
+    setRotation(GetAngle());
+    body->SetLinearVelocity(GetVelocity());
+    body->SetAngularVelocity(0);
+}
+
+void Enemy::Attack(int x, int y, int target_x, int target_y, int speed, int health) {
+    this->health = health;
+    this->target_x = target_x;
+    this->target_y = target_y;
+    this->speed = speed;
+
+    setPosition(x, y);
+    Retarget();
 
     in_use = true;
     body->SetActive(true);
 }
 
-// Note - maybe convert to interface later
+void Enemy::Damage(int damage) { 
+	health -= damage;
+    if (health <= 0) {
+        collided = true;
+	}
+}
 
 void Enemy::Reset() {
     in_use = false;
