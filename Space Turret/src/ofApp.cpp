@@ -40,9 +40,9 @@ constexpr int enemy_speed = 5;
 //--------------------------------------------------------------
 void ofApp::setup() {
     // Background music: Tilt by Avaren https://www.avarenmusic.co/
-    background_music.load("Tilt.mp3");
+    /*background_music.load("Tilt.mp3");
     background_music.play();
-    background_music.setLoop(true);
+    background_music.setLoop(true);*/
 
     ofSetVerticalSync(true);
     ofBackground(0, 0, 0);
@@ -149,16 +149,30 @@ void ofApp::update() {
             std::sin(player_ship->getRotation() * kDegreeRadMult) * scalar_mult);
 
         player_ship->addForce(force_vec, 1);
+    }
 
-        // Enforce max velocity
-        if (player_ship->getVelocity().length() > max_speed) {
-            // Rescale vectors using this equation:
-            // new_vector = required_length/old_magnitude * old_vector
+	// Wrapping player around the screen
+    if (player_ship->getPosition().x < 0) {
+        player_ship->setPosition(ofGetWidth(), player_ship->getPosition().y);
+    }
+    if (player_ship->getPosition().y < 0) {
+        player_ship->setPosition(player_ship->getPosition().x, ofGetHeight());
+    }
+    if (player_ship->getPosition().x > ofGetWidth()) {
+        player_ship->setPosition(0, player_ship->getPosition().y);
+    }
+    if (player_ship->getPosition().y > ofGetHeight()) {
+        player_ship->setPosition(player_ship->getPosition().x, 0);
+    }
 
-            player_ship->setVelocity(
-                player_ship->getVelocity() *
-                (max_speed / player_ship->getVelocity().length()));
-        }
+	// Enforce max velocity
+    if (player_ship->getVelocity().length() > max_speed) {
+        // Rescale vectors using this equation:
+        // new_vector = required_length/old_magnitude * old_vector
+
+        player_ship->setVelocity(
+            player_ship->getVelocity() *
+            (max_speed / player_ship->getVelocity().length()));
     }
 
     // Calculate gravity force from the planets using inverse square law

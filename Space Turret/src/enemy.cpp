@@ -43,9 +43,6 @@ void Enemy::Attack(int x, int y, int target_x, int target_y, int speed) {
 
     b2Vec2 velocity(target_x - x, target_y - y);
     velocity.Normalize();
-
-    std::cout << velocity.x << ' ' << velocity.y << std::endl;
-
     velocity *= speed;
 
     body->SetLinearVelocity(velocity);
