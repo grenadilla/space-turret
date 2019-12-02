@@ -6,6 +6,8 @@
 #include "ofMain.h"
 #include "ofxBox2d.h"
 
+#include <vector>
+
 class Enemy : public ofxBox2dPolygon, public Preloaded {
    public:
 	Enemy();
@@ -15,11 +17,17 @@ class Enemy : public ofxBox2dPolygon, public Preloaded {
     void Reset();
     void Retarget();
 
+    void draw();
+
+	static void SetColors(std::vector<int> colors);
+
    private:
     int health;
     int target_x;
     int target_y;
     int speed;
+
+	static std::vector<int> colors;
 
 	b2Vec2 GetVelocity();
     int GetAngle();

@@ -10,6 +10,8 @@ constexpr int y_hiding = -20;
 
 constexpr int tri_angle = 30;
 
+std::vector<int> Enemy::colors;
+
 Enemy::Enemy() = default;
 
 Enemy::Enemy(b2World* b2World, int size, float density) {
@@ -79,4 +81,21 @@ void Enemy::Reset() {
     body->SetLinearVelocity({0, 0});
     body->SetAngularVelocity(0);
     setPosition(x_hiding, y_hiding);
+}
+
+void Enemy::SetColors(std::vector<int> colors) { Enemy::colors = colors; }
+
+//Create out own version of the draw method, named the same as box2d draw
+//Must call SetColors sometime before in setup
+void Enemy::draw() {
+    int color;
+    if (health > colors.size()) {
+        color = colors.back();
+    } else {
+        color = colors[health - 1];
+	}
+
+	ofFill();
+    ofSetHexColor(color);
+    ofxBox2dPolygon::draw();
 }

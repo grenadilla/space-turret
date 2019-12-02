@@ -33,4 +33,11 @@
     - Fix memory leak by preloading bullets
 
    **11/29/19**
-    - Add enemies
+    - Add enemies and preload them
+
+   **11/30/19**
+    - Give enemies hitpoints and deal with cancelling multiple collisions
+	- Add screen wrapping for player
+
+   **12/1/19**
+    - Enemies change colors when hit

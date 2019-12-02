@@ -13,7 +13,7 @@ constexpr int player_ship_radius = 20;
 
 const std::pair<int, int> fuel_planet_coord(700, 300);
 const std::pair<int, int> ammo_planet_coord(200, 300);
-const std::pair<int, int> player_start_coord(400, 300);
+const std::pair<int, int> player_start_coord(600, 300);
 
 constexpr int fuel_planet_gravity = 250;
 constexpr int ammo_planet_gravity = 250;
@@ -33,6 +33,7 @@ constexpr int bullet_speed = 20;
 constexpr int bullet_interval = 10;
 int bullet_timer = 0;
 
+const std::vector<int> enemy_colors = {0x4fd1cf, 0x79d14f, 0xd46a0d, 0xbd2020};
 constexpr int enemy_size = 30;
 constexpr int total_enemies = 15;
 constexpr int enemy_speed = 5;
@@ -71,6 +72,7 @@ void ofApp::setup() {
 
 	//Set up bullets
     bullet_index = 0;
+    Enemy::SetColors(enemy_colors);
     for (int i = 0; i < total_bullets; i++) {
         auto new_bullet = std::make_shared<Bullet>(box2d.getWorld(),
                                                    bullet_height, bullet_width);
@@ -91,7 +93,7 @@ void ofApp::setup() {
     player_ship->setFixedRotation(true);
 
 	enemies[0]->Attack(300, 700, fuel_planet_coord.first, fuel_planet_coord.second,
-                       enemy_speed, 1);
+                       enemy_speed, 4);
 }
 
 //--------------------------------------------------------------
