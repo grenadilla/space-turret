@@ -19,8 +19,8 @@ const std::pair<int, int> ammo_planet_coord(200, 300);
 const std::pair<int, int> player_start_coord(600, 300);
 
 constexpr int player_start_health = 3;
-constexpr int player_start_fuel = 50;
-constexpr int player_start_ammo = 5;
+constexpr int player_start_fuel = 5000;
+constexpr int player_start_ammo = 10;
 
 constexpr float player_density = 1;
 constexpr float player_bounce = 0.2;
@@ -120,7 +120,7 @@ void ofApp::update() {
         bullet_timer--;
     }
 
-    if (bullet_timer == 0 && keys_pressed.count(' ')) {
+    if (bullet_timer == 0 && player_ship->GetAmmo() > 0 && keys_pressed.count(' ')) {
         auto bullet = bullets[bullet_index];
         bullet->Shoot(player_ship->getPosition().x,
                       player_ship->getPosition().y, player_ship->getRadius(),
@@ -130,6 +130,7 @@ void ofApp::update() {
             bullet_index = 0;
 		}
         bullet_timer = bullet_interval;
+        player_ship->SetAmmo(player_ship->GetAmmo() - 1);
     }
 
     // Movement
@@ -144,8 +145,8 @@ void ofApp::update() {
         player_ship->setRotation(player_ship->getRotation() + rotate_speed);
     }
 
-    if (keys_pressed.count(OF_KEY_UP) || keys_pressed.count(OF_KEY_DOWN) ||
-        keys_pressed.count('w') || keys_pressed.count('s')) {
+    if ((keys_pressed.count(OF_KEY_UP) || keys_pressed.count(OF_KEY_DOWN) ||
+        keys_pressed.count('w') || keys_pressed.count('s')) && player_ship->GetFuel() > 0) {
 
         int scalar_mult;
         if (keys_pressed.count(OF_KEY_UP) || keys_pressed.count('w')) {
@@ -162,6 +163,7 @@ void ofApp::update() {
             std::sin(player_ship->getRotation() * kDegreeRadMult) * scalar_mult);
 
         player_ship->addForce(force_vec, 1);
+        player_ship->SetFuel(player_ship->GetFuel() - 1);
     }
 
 	// Wrapping player around the screen
@@ -310,6 +312,10 @@ void ofApp::draw() {
 	message = "Ammo: " + std::to_string(player_ship->GetAmmo()) + "/" +
               std::to_string(player_ship->GetMaxAmmo());
     font.drawString(message, 20, 40);
+
+	message = "Fuel: " + std::to_string(player_ship->GetFuel() / 10) + "/" +
+              std::to_string(player_ship->GetMaxFuel() / 10);
+    font.drawString(message, 20, 60);
 
     ofFill();
 
