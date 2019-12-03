@@ -1,5 +1,8 @@
 #include "ofApp.h"
+
 #include <iostream>
+#include <string>
+
 #include "calculations.h"
 #include "identifier.h"
 
@@ -46,12 +49,18 @@ constexpr int enemy_size = 30;
 constexpr int total_enemies = 15;
 constexpr int enemy_speed = 5;
 
+constexpr int font_size = 12;
+
 //--------------------------------------------------------------
 void ofApp::setup() {
     // Background music: Tilt by Avaren https://www.avarenmusic.co/
     /*background_music.load("Tilt.mp3");
     background_music.play();
     background_music.setLoop(true);*/
+
+	//Load font
+	ofTrueTypeFont::setGlobalDpi(72);
+    font.load("ibm_bios.ttf", font_size);
 
     ofSetVerticalSync(true);
     ofBackground(0, 0, 0);
@@ -292,6 +301,16 @@ void ofApp::contactEnd(ofxBox2dContactArgs& e) {
 
 //--------------------------------------------------------------
 void ofApp::draw() {
+    ofSetHexColor(0x4AF626);
+    std::string message =
+        "Health: " + std::to_string(player_ship->GetHealth()) + "/" +
+        std::to_string(player_ship->GetMaxHealth());
+    font.drawString(message, 20, 20);
+
+	message = "Ammo: " + std::to_string(player_ship->GetAmmo()) + "/" +
+              std::to_string(player_ship->GetMaxAmmo());
+    font.drawString(message, 20, 40);
+
     ofFill();
 
     ofSetHexColor(0x800080);

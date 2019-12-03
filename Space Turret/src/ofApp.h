@@ -38,6 +38,8 @@ class ofApp : public ofBaseApp{
 	private:
 		ofSoundPlayer background_music;
 
+		ofTrueTypeFont font;
+
 		ofxBox2d box2d;
 
 		shared_ptr<Planet> fuel_planet;
