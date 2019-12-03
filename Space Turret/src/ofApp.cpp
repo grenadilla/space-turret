@@ -16,11 +16,13 @@ constexpr int player_ship_radius = 20;
 
 const std::pair<int, int> fuel_planet_coord(700, 300);
 const std::pair<int, int> ammo_planet_coord(200, 300);
-const std::pair<int, int> player_start_coord(600, 300);
+const std::pair<int, int> player_start_coord(500, 300);
 
 constexpr int player_start_health = 3;
 constexpr int player_start_fuel = 5000;
 constexpr int player_start_ammo = 10;
+constexpr int player_fuel_refresh = 3;
+constexpr int player_ammo_refresh = 1;
 
 constexpr float player_density = 1;
 constexpr float player_bounce = 0.2;
@@ -47,7 +49,7 @@ int bullet_timer = 0;
 const std::vector<int> enemy_colors = {0x4fd1cf, 0x79d14f, 0xd46a0d, 0xbd2020};
 constexpr int enemy_size = 30;
 constexpr int total_enemies = 15;
-constexpr int enemy_speed = 5;
+constexpr int enemy_speed = 3;
 
 constexpr int font_size = 12;
 
@@ -84,8 +86,8 @@ void ofApp::setup() {
     player_ship = make_shared<Player>(
             box2d.getWorld(), player_start_coord.first,
             player_start_coord.second, player_ship_radius, player_start_health,
-            player_start_fuel, player_start_ammo, player_density, player_bounce,
-            player_friction);
+            player_start_fuel, player_start_ammo, player_fuel_refresh, player_ammo_refresh, 
+			player_density, player_bounce, player_friction);
 
 	//Set up bullets
     bullet_index = 0;
@@ -120,7 +122,8 @@ void ofApp::update() {
         bullet_timer--;
     }
 
-    if (bullet_timer == 0 && player_ship->GetAmmo() > 0 && keys_pressed.count(' ')) {
+    if (bullet_timer == 0 && player_ship->GetAmmo() > 0 &&
+        keys_pressed.count(' ')) {
         auto bullet = bullets[bullet_index];
         bullet->Shoot(player_ship->getPosition().x,
                       player_ship->getPosition().y, player_ship->getRadius(),
@@ -128,7 +131,7 @@ void ofApp::update() {
         bullet_index++;
         if (bullet_index >= bullets.size()) {
             bullet_index = 0;
-		}
+        }
         bullet_timer = bullet_interval;
         player_ship->SetAmmo(player_ship->GetAmmo() - 1);
     }
@@ -146,8 +149,8 @@ void ofApp::update() {
     }
 
     if ((keys_pressed.count(OF_KEY_UP) || keys_pressed.count(OF_KEY_DOWN) ||
-        keys_pressed.count('w') || keys_pressed.count('s')) && player_ship->GetFuel() > 0) {
-
+         keys_pressed.count('w') || keys_pressed.count('s')) &&
+        player_ship->GetFuel() > 0) {
         int scalar_mult;
         if (keys_pressed.count(OF_KEY_UP) || keys_pressed.count('w')) {
             scalar_mult = engine_force_mult;
@@ -160,13 +163,14 @@ void ofApp::update() {
         ofVec2f force_vec;
         force_vec.set(
             std::cos(player_ship->getRotation() * kDegreeRadMult) * scalar_mult,
-            std::sin(player_ship->getRotation() * kDegreeRadMult) * scalar_mult);
+            std::sin(player_ship->getRotation() * kDegreeRadMult) *
+                scalar_mult);
 
         player_ship->addForce(force_vec, 1);
         player_ship->SetFuel(player_ship->GetFuel() - 1);
     }
 
-	// Wrapping player around the screen
+    // Wrapping player around the screen
     if (player_ship->getPosition().x < 0) {
         player_ship->setPosition(ofGetWidth(), player_ship->getPosition().y);
     }
@@ -180,7 +184,7 @@ void ofApp::update() {
         player_ship->setPosition(player_ship->getPosition().x, 0);
     }
 
-	// Enforce max velocity
+    // Enforce max velocity
     if (player_ship->getVelocity().length() > max_speed) {
         // Rescale vectors using this equation:
         // new_vector = required_length/old_magnitude * old_vector
@@ -199,6 +203,39 @@ void ofApp::update() {
                       ammo_planet->getB2DPosition());
 
     player_ship->addForce(fuel_gravity_force + ammo_gravity_force, 1);
+
+	//Check which planet the player is "touching"
+	//The +1 after the radius is for a small margin of error
+    if (player_ship->getPosition().distance(fuel_planet->getPosition()) <=
+        player_ship->getRadius() + fuel_planet->getRadius() + 1) {
+		fuel_planet->SetTouchingPlayer(true);
+    } else {
+        fuel_planet->SetTouchingPlayer(false);
+	}
+
+	if (player_ship->getPosition().distance(ammo_planet->getPosition()) <=
+        player_ship->getRadius() + ammo_planet->getRadius() + 1) {
+		ammo_planet->SetTouchingPlayer(true);
+    } else {
+        ammo_planet->SetTouchingPlayer(false);
+	}
+
+    // Restock fuel and ammo if player is touching correct planet
+    if (fuel_planet->IsTouchingPlayer()) {
+        int fuel = player_ship->GetFuel() + player_ship->GetFuelRefresh();
+        if (fuel > player_ship->GetMaxFuel()) {
+            fuel = player_ship->GetMaxFuel();
+		}
+        player_ship->SetFuel(fuel);
+    }
+
+	if (ammo_planet->IsTouchingPlayer()) {
+        int ammo = player_ship->GetAmmo() + player_ship->GetAmmoRefresh();
+        if (ammo > player_ship->GetMaxAmmo()) {
+            ammo = player_ship->GetMaxAmmo();
+        }
+        player_ship->SetAmmo(ammo);
+    }
 }
 
 void ofApp::contactStart(ofxBox2dContactArgs &e) {
@@ -255,20 +292,6 @@ void ofApp::contactStart(ofxBox2dContactArgs &e) {
         enemy->Damage();
     }
 
-    if (id_a->GetType() == Identifier::ShapeType::Player &&
-		id_b->GetType() == Identifier::ShapeType::Planet) {
-        shared_ptr<Planet> planet =
-            std::static_pointer_cast<Planet>(id_b->GetShape());
-        planet->SetTouchingPlayer(true);
-    }
-
-	if (id_b->GetType() == Identifier::ShapeType::Player &&
-        id_a->GetType() == Identifier::ShapeType::Planet) {
-        shared_ptr<Planet> planet =
-            std::static_pointer_cast<Planet>(id_a->GetShape());
-        planet->SetTouchingPlayer(true);
-    }
-
 	if (id_a->GetType() == Identifier::ShapeType::Player &&
         id_b->GetType() == Identifier::ShapeType::Enemy) {
         shared_ptr<Enemy> enemy =
@@ -302,20 +325,6 @@ void ofApp::contactEnd(ofxBox2dContactArgs& e) {
         shared_ptr<Enemy> enemy =
             std::static_pointer_cast<Enemy>(id_a->GetShape());
         enemy->Retarget();
-    }
-
-	if (id_a->GetType() == Identifier::ShapeType::Player &&
-        id_b->GetType() == Identifier::ShapeType::Planet) {
-        shared_ptr<Planet> planet =
-            std::static_pointer_cast<Planet>(id_b->GetShape());
-        planet->SetTouchingPlayer(false);
-    }
-
-    if (id_b->GetType() == Identifier::ShapeType::Player &&
-        id_a->GetType() == Identifier::ShapeType::Planet) {
-        shared_ptr<Planet> planet =
-            std::static_pointer_cast<Planet>(id_a->GetShape());
-        planet->SetTouchingPlayer(false);
     }
 }
 
