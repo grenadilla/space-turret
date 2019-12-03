@@ -302,6 +302,7 @@
     <ClCompile Include="..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\libs\liquidfun\Contributions\Utilities\ConvexDecomposition\b2Triangle.cpp" />
     <ClCompile Include="..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\libs\Triangle\triangle.cpp" />
     <ClCompile Include="src\planet.cpp" />
+    <ClCompile Include="src\player.cpp" />
     <ClCompile Include="src\preloaded.cpp" />
     <ClCompile Include="test\main.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
@@ -399,6 +400,7 @@
     <ClInclude Include="..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\libs\liquidfun\Contributions\Utilities\ConvexDecomposition\b2Triangle.h" />
     <ClInclude Include="..\..\..\..\Documents\of_v0.10.1_vs2017_release\addons\ofxBox2d\libs\Triangle\triangle.h" />
     <ClInclude Include="src\planet.h" />
+    <ClInclude Include="src\player.h" />
     <ClInclude Include="src\preloaded.h" />
   </ItemGroup>
   <ItemGroup>

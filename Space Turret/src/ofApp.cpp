@@ -15,6 +15,14 @@ const std::pair<int, int> fuel_planet_coord(700, 300);
 const std::pair<int, int> ammo_planet_coord(200, 300);
 const std::pair<int, int> player_start_coord(600, 300);
 
+constexpr int player_start_health = 3;
+constexpr int player_start_fuel = 50;
+constexpr int player_start_ammo = 5;
+
+constexpr float player_density = 1;
+constexpr float player_bounce = 0.2;
+constexpr float player_friction = 0.1;
+
 constexpr int fuel_planet_gravity = 250;
 constexpr int ammo_planet_gravity = 250;
 
@@ -64,11 +72,11 @@ void ofApp::setup() {
 	ammo_planet = make_shared<Planet>(box2d.getWorld(), ammo_planet_coord.first,
                             ammo_planet_coord.second, ammo_planet_radius);
 
-    player_ship = make_shared<ofxBox2dCircle>();
-
-    player_ship->setPhysics(1.0, 0.2, 0.1);
-    player_ship->setup(box2d.getWorld(), player_start_coord.first,
-                      player_start_coord.second, player_ship_radius);
+    player_ship = make_shared<Player>(
+            box2d.getWorld(), player_start_coord.first,
+            player_start_coord.second, player_ship_radius, player_start_health,
+            player_start_fuel, player_start_ammo, player_density, player_bounce,
+            player_friction);
 
 	//Set up bullets
     bullet_index = 0;
@@ -85,12 +93,6 @@ void ofApp::setup() {
         auto new_enemy = std::make_shared<Enemy>(box2d.getWorld(), enemy_size);
         enemies.push_back(new_enemy);
 	}	
-
-    player_ship->setData(
-            new Identifier(Identifier::ShapeType::Player, player_ship.get()));
-
-	//Set fixed rotation so player ship doesn't roll around with friction
-    player_ship->setFixedRotation(true);
 
 	enemies[0]->Attack(300, 700, fuel_planet_coord.first, fuel_planet_coord.second,
                        enemy_speed, 4);

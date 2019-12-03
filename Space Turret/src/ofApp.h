@@ -6,6 +6,7 @@
 #include "planet.h"
 #include "bullet.h"
 #include "enemy.h"
+#include "player.h"
 
 #include <cmath>
 #include <set>
@@ -41,8 +42,7 @@ class ofApp : public ofBaseApp{
 
 		shared_ptr<Planet> fuel_planet;
         shared_ptr<Planet> ammo_planet;
-
-        shared_ptr<ofxBox2dCircle> player_ship;
+        shared_ptr<Player> player_ship;
 
 		std::vector<std::shared_ptr<Bullet>> bullets;
         int bullet_index;
