@@ -224,6 +224,7 @@ void ofApp::contactStart(ofxBox2dContactArgs &e) {
         shared_ptr<Enemy> enemy =
             std::static_pointer_cast<Enemy>(id_a->GetShape());
         enemy->SetCollided(true);
+        player_ship->SetHealth(player_ship->GetHealth() - 1);
     }
 
     if (id_b->GetType() == Identifier::ShapeType::Enemy &&
@@ -231,6 +232,7 @@ void ofApp::contactStart(ofxBox2dContactArgs &e) {
         shared_ptr<Bullet> enemy =
             std::static_pointer_cast<Bullet>(id_b->GetShape());
         enemy->SetCollided(true);
+        player_ship->SetHealth(player_ship->GetHealth() - 1);
     }
 
     if (id_a->GetType() == Identifier::ShapeType::Bullet &&
@@ -265,6 +267,22 @@ void ofApp::contactStart(ofxBox2dContactArgs &e) {
         shared_ptr<Planet> planet =
             std::static_pointer_cast<Planet>(id_a->GetShape());
         planet->SetTouchingPlayer(true);
+    }
+
+	if (id_a->GetType() == Identifier::ShapeType::Player &&
+        id_b->GetType() == Identifier::ShapeType::Enemy) {
+        shared_ptr<Enemy> enemy =
+            std::static_pointer_cast<Enemy>(id_b->GetShape());
+        enemy->SetCollided(true);
+        player_ship->SetHealth(player_ship->GetHealth() - 1);
+    }
+
+    if (id_b->GetType() == Identifier::ShapeType::Player &&
+        id_a->GetType() == Identifier::ShapeType::Enemy) {
+        shared_ptr<Enemy> enemy =
+            std::static_pointer_cast<Enemy>(id_a->GetShape());
+        enemy->SetCollided(true);
+        player_ship->SetHealth(player_ship->GetHealth() - 1);
     }
 }
 
