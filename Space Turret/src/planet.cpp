@@ -14,3 +14,7 @@ Planet::Planet(b2World *b2dWorld, int x, int y, int radius, float density,
     body->SetType(b2_staticBody);
     setData(new Identifier(Identifier::ShapeType::Planet, this));
 }
+
+bool Planet::IsTouchingPlayer() { return touching_player; }
+
+void Planet::SetTouchingPlayer(bool touching) { touching_player = touching; }

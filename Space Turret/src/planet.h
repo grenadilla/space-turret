@@ -6,4 +6,10 @@ class Planet : public ofxBox2dCircle {
     Planet();
     Planet(b2World *b2dWorld, int x, int y, int radius, 
 		float density = 0, float bounce = 0, float friction = 0.1);
+
+	bool IsTouchingPlayer();
+    void SetTouchingPlayer(bool touching);
+
+   private:
+    bool touching_player;
 };
