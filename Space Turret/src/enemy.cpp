@@ -1,9 +1,9 @@
 #include "enemy.h"
+#include "calculations.h"
 
 #include <iostream>
 
 const double kDegreeRadMult = PI / 180;
-constexpr int kDegreeInCircle = 360;
 
 constexpr int x_hiding = -20;
 constexpr int y_hiding = -20;
@@ -40,16 +40,8 @@ b2Vec2 Enemy::GetVelocity() {
     return velocity;
 }
 
-int Enemy::GetAngle() {
-    // Get angle in radians, convert to degrees, and set to between 0 and 360
-    int angle = std::atan((double)(target_y - getPosition().y) / (target_x - getPosition().x));
-    angle /= kDegreeRadMult;
-    angle = (angle + kDegreeInCircle) % kDegreeInCircle;
-    return angle;
-}
-
 void Enemy::Retarget() {
-    setRotation(GetAngle());
+    setRotation(calc::GetAngle(target_x - getPosition().x, target_y - getPosition().y));
     body->SetLinearVelocity(GetVelocity());
     body->SetAngularVelocity(0);
 }

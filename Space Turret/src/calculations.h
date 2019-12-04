@@ -4,4 +4,6 @@
 namespace calc {
 ofVec2f gravity(double multiplier, ofVec2f player_position,
                 ofVec2f planet_position);
+
+int GetAngle(int x, int y);
 }

@@ -30,5 +30,4 @@ class Enemy : public ofxBox2dPolygon, public Preloaded {
 	static std::vector<int> colors;
 
 	b2Vec2 GetVelocity();
-    int GetAngle();
 };

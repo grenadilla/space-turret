@@ -159,8 +159,6 @@ void ofApp::update() {
                                              enemy_speed, i);
 			}
 
-			std::cout << enemy_index << std::endl;
-            std::cout << enemies.size() << std::endl;
 			enemies[enemy_index]->Attack(x, y, ammo_planet->getPosition().x,
                                          ammo_planet->getPosition().y,
                                          enemy_speed, i + 1);
