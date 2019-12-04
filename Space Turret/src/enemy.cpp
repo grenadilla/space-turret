@@ -41,7 +41,8 @@ b2Vec2 Enemy::GetVelocity() {
 }
 
 void Enemy::Retarget() {
-    setRotation(calc::GetAngle(target_x - getPosition().x, target_y - getPosition().y));
+	//+180 to flip sharp point
+    setRotation(calc::GetAngle(target_x - getPosition().x, target_y - getPosition().y) + 180);
     body->SetLinearVelocity(GetVelocity());
     body->SetAngularVelocity(0);
 }

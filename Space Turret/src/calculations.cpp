@@ -1,5 +1,7 @@
 #include "calculations.h"
 
+#include <cmath>
+
 const double kDegreeRadMult = PI / 180;
 constexpr int kDegreeInCircle = 360;
 
@@ -15,8 +17,7 @@ namespace calc {
 	int GetAngle(int x, int y) {
         // Get angle in radians, convert to degrees, and set to between 0 and
         // 360
-        int angle = std::atan((double) y / x);
-        angle /= kDegreeRadMult;
+        int angle = (int) (std::atan((double) y / x) / kDegreeRadMult);
 
         // Range of arctan is from -90 to 90 degrees, so we have to check for
         // 180 to 270 degrees
