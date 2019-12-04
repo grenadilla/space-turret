@@ -32,3 +32,17 @@ TEST_CASE("Gravity calculations work") {
         REQUIRE(calculated_gravity.y == Approx(expected_gravity.y));
     }
 }
+
+TEST_CASE("Angle calculations work") {
+    SECTION("Vector <2,2> works") { 
+		REQUIRE(calc::GetAngle(2, 2) == 45);
+	}
+
+	SECTION("Vector <0,1> works") { 
+		REQUIRE(calc::GetAngle(0, 1) == 90);
+	}
+
+	SECTION("Vector <15, 26> works") { 
+		REQUIRE(calc::GetAngle(15, 26) == 60); 
+	}
+}
