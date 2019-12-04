@@ -54,6 +54,8 @@ class ofApp : public ofBaseApp{
 
 		std::set<int> keys_pressed;
 
+        std::vector<double> spawn_rates;
+
 		void removeBullets();
         void removeEnemies();
 };

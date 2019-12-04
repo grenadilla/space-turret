@@ -7,5 +7,5 @@ namespace calc {
             gravity_force =
                 gravity_force.getNormalized() / gravity_force.lengthSquared();
             return gravity_force * multiplier;
-        }
+    }
 }

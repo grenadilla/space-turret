@@ -38,7 +38,7 @@ constexpr int rotate_speed = 5;
 constexpr int bullet_height = 10;
 constexpr int bullet_width = 4;
 
-//Number of bullets to preload
+// Number of bullets to preload
 constexpr int total_bullets = 30;
 constexpr int bullet_speed = 20;
 
@@ -50,6 +50,8 @@ const std::vector<int> enemy_colors = {0x4fd1cf, 0x79d14f, 0xd46a0d, 0xbd2020};
 constexpr int enemy_size = 30;
 constexpr int total_enemies = 15;
 constexpr int enemy_speed = 3;
+constexpr double start_spawn_rate = 0.005;
+constexpr double spawn_boundary_prop = 0.05;
 
 constexpr int font_size = 12;
 
@@ -60,8 +62,8 @@ void ofApp::setup() {
     background_music.play();
     background_music.setLoop(true);*/
 
-	//Load font
-	ofTrueTypeFont::setGlobalDpi(72);
+    // Load font
+    ofTrueTypeFont::setGlobalDpi(72);
     font.load("ibm_bios.ttf", font_size);
 
     ofSetVerticalSync(true);
@@ -77,36 +79,37 @@ void ofApp::setup() {
     ofAddListener(box2d.contactStartEvents, this, &ofApp::contactStart);
     ofAddListener(box2d.contactEndEvents, this, &ofApp::contactEnd);
 
-    fuel_planet = make_shared<Planet>(box2d.getWorld(), fuel_planet_coord.first,
-                         fuel_planet_coord.second, fuel_planet_radius);
+    fuel_planet =
+        make_shared<Planet>(box2d.getWorld(), fuel_planet_coord.first,
+                            fuel_planet_coord.second, fuel_planet_radius);
 
-	ammo_planet = make_shared<Planet>(box2d.getWorld(), ammo_planet_coord.first,
+    ammo_planet =
+        make_shared<Planet>(box2d.getWorld(), ammo_planet_coord.first,
                             ammo_planet_coord.second, ammo_planet_radius);
 
     player_ship = make_shared<Player>(
-            box2d.getWorld(), player_start_coord.first,
-            player_start_coord.second, player_ship_radius, player_start_health,
-            player_start_fuel, player_start_ammo, player_fuel_refresh, player_ammo_refresh, 
-			player_density, player_bounce, player_friction);
+        box2d.getWorld(), player_start_coord.first, player_start_coord.second,
+        player_ship_radius, player_start_health, player_start_fuel,
+        player_start_ammo, player_fuel_refresh, player_ammo_refresh,
+        player_density, player_bounce, player_friction);
 
-	//Set up bullets
+    // Set up bullets
     bullet_index = 0;
     Enemy::SetColors(enemy_colors);
     for (int i = 0; i < total_bullets; i++) {
         auto new_bullet = std::make_shared<Bullet>(box2d.getWorld(),
                                                    bullet_height, bullet_width);
         bullets.push_back(new_bullet);
-	}
+    }
 
-	//Set up enemies
+    // Set up enemies
     enemy_index = 0;
     for (int i = 0; i < total_enemies; i++) {
         auto new_enemy = std::make_shared<Enemy>(box2d.getWorld(), enemy_size);
         enemies.push_back(new_enemy);
-	}	
-
-	enemies[0]->Attack(300, 700, fuel_planet_coord.first, fuel_planet_coord.second,
-                       enemy_speed, 4);
+    }
+    
+    spawn_rates.push_back(start_spawn_rate);
 }
 
 //--------------------------------------------------------------
@@ -116,6 +119,58 @@ void ofApp::update() {
     // Remove out of bounds bullets
     removeBullets();
     removeEnemies();
+
+    // Spawn enemies
+    for (int i = 0; i < spawn_rates.size(); i++) {
+		// i is health
+        if (ofRandom(0, 1) <= spawn_rates[i]) {
+            int x;
+            int y;
+
+            // Select if on horizontal or vertical
+            if (ofRandom(0, 2) >= 1) {
+                // Horizontal
+                // Left or right
+                if (ofRandom(0, 2) >= 1) {
+                    x = spawn_boundary_prop * ofGetWidth();
+                } else {
+                    x = (1 - spawn_boundary_prop) * ofGetWidth();
+				}
+                y = ofRandom(0, 1) * ofGetHeight();
+            } else {
+                // Vertical
+                // Top or bottom
+                if (ofRandom(0, 2) >= 1) {
+                    y = spawn_boundary_prop * ofGetHeight();
+                } else {
+                    y = (1 - spawn_boundary_prop) * ofGetHeight();
+                }
+                x = ofRandom(0, 1) * ofGetWidth();
+            }
+
+			// Decide which planet to target
+            if (ofRandom(0, 2) >= 1) {
+                enemies[enemy_index]->Attack(x, y, fuel_planet->getPosition().x,
+                                             fuel_planet->getPosition().y,
+                                             enemy_speed, i);
+			} else {
+                enemies[enemy_index]->Attack(x, y, ammo_planet->getPosition().x,
+                                             ammo_planet->getPosition().y,
+                                             enemy_speed, i);
+			}
+
+			std::cout << enemy_index << std::endl;
+            std::cout << enemies.size() << std::endl;
+			enemies[enemy_index]->Attack(x, y, ammo_planet->getPosition().x,
+                                         ammo_planet->getPosition().y,
+                                         enemy_speed, i + 1);
+
+			enemy_index++;
+            if (enemy_index >= enemies.size()) {
+                enemy_index = 0;
+			}
+        }
+    }
 
     // Shooting
     if (bullet_timer > 0) {
@@ -204,32 +259,32 @@ void ofApp::update() {
 
     player_ship->addForce(fuel_gravity_force + ammo_gravity_force, 1);
 
-	//Check which planet the player is "touching"
-	//The +1 after the radius is for a small margin of error
+    // Check which planet the player is "touching"
+    // The +1 after the radius is for a small margin of error
     if (player_ship->getPosition().distance(fuel_planet->getPosition()) <=
         player_ship->getRadius() + fuel_planet->getRadius() + 1) {
-		fuel_planet->SetTouchingPlayer(true);
+        fuel_planet->SetTouchingPlayer(true);
     } else {
         fuel_planet->SetTouchingPlayer(false);
-	}
+    }
 
-	if (player_ship->getPosition().distance(ammo_planet->getPosition()) <=
+    if (player_ship->getPosition().distance(ammo_planet->getPosition()) <=
         player_ship->getRadius() + ammo_planet->getRadius() + 1) {
-		ammo_planet->SetTouchingPlayer(true);
+        ammo_planet->SetTouchingPlayer(true);
     } else {
         ammo_planet->SetTouchingPlayer(false);
-	}
+    }
 
     // Restock fuel and ammo if player is touching correct planet
     if (fuel_planet->IsTouchingPlayer()) {
         int fuel = player_ship->GetFuel() + player_ship->GetFuelRefresh();
         if (fuel > player_ship->GetMaxFuel()) {
             fuel = player_ship->GetMaxFuel();
-		}
+        }
         player_ship->SetFuel(fuel);
     }
 
-	if (ammo_planet->IsTouchingPlayer()) {
+    if (ammo_planet->IsTouchingPlayer()) {
         int ammo = player_ship->GetAmmo() + player_ship->GetAmmoRefresh();
         if (ammo > player_ship->GetMaxAmmo()) {
             ammo = player_ship->GetMaxAmmo();
@@ -292,7 +347,7 @@ void ofApp::contactStart(ofxBox2dContactArgs &e) {
         enemy->Damage();
     }
 
-	if (id_a->GetType() == Identifier::ShapeType::Player &&
+    if (id_a->GetType() == Identifier::ShapeType::Player &&
         id_b->GetType() == Identifier::ShapeType::Enemy) {
         shared_ptr<Enemy> enemy =
             std::static_pointer_cast<Enemy>(id_b->GetShape());
@@ -309,7 +364,7 @@ void ofApp::contactStart(ofxBox2dContactArgs &e) {
     }
 }
 
-void ofApp::contactEnd(ofxBox2dContactArgs& e) {
+void ofApp::contactEnd(ofxBox2dContactArgs &e) {
     Identifier *id_a = static_cast<Identifier *>(e.a->GetBody()->GetUserData());
     Identifier *id_b = static_cast<Identifier *>(e.b->GetBody()->GetUserData());
 
@@ -336,11 +391,11 @@ void ofApp::draw() {
         std::to_string(player_ship->GetMaxHealth());
     font.drawString(message, 20, 20);
 
-	message = "Ammo: " + std::to_string(player_ship->GetAmmo()) + "/" +
+    message = "Ammo: " + std::to_string(player_ship->GetAmmo()) + "/" +
               std::to_string(player_ship->GetMaxAmmo());
     font.drawString(message, 20, 40);
 
-	message = "Fuel: " + std::to_string(player_ship->GetFuel() / 10) + "/" +
+    message = "Fuel: " + std::to_string(player_ship->GetFuel() / 10) + "/" +
               std::to_string(player_ship->GetMaxFuel() / 10);
     font.drawString(message, 20, 60);
 
@@ -352,10 +407,10 @@ void ofApp::draw() {
     for (auto bullet : bullets) {
         if (bullet->IsInUse()) {
             bullet->draw();
-		}
+        }
     }
 
-	for (auto enemy : enemies) {
+    for (auto enemy : enemies) {
         if (enemy->IsInUse()) {
             enemy->draw();
         }
@@ -368,12 +423,12 @@ void ofApp::draw() {
 }
 
 void ofApp::removeBullets() {
-	//Remove bullets if out of bounds or collided
+    // Remove bullets if out of bounds or collided
     for (int i = 0; i < bullets.size(); i++) {
         ofVec2f position = bullets[i]->getPosition();
         if (position.x < 0 || position.x > ofGetWindowWidth() ||
             position.y < 0 || position.y > ofGetWindowHeight() ||
-			bullets[i]->DidCollide()) {
+            bullets[i]->DidCollide()) {
             bullets[i]->Reset();
         }
     }
