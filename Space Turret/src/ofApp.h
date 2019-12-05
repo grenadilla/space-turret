@@ -54,6 +54,7 @@ class ofApp : public ofBaseApp{
 
 		std::set<int> keys_pressed;
 
+		int difficulty_increase_timer;
         std::vector<double> spawn_rates;
 
 		void removeBullets();

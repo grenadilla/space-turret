@@ -51,6 +51,7 @@ constexpr int enemy_size = 30;
 constexpr int total_enemies = 15;
 constexpr int enemy_speed = 3;
 constexpr double start_spawn_rate = 0.005;
+constexpr int difficulty_increase_duration = 1000;
 constexpr double spawn_boundary_prop = 0.05;
 
 constexpr int font_size = 12;
@@ -108,7 +109,8 @@ void ofApp::setup() {
         auto new_enemy = std::make_shared<Enemy>(box2d.getWorld(), enemy_size);
         enemies.push_back(new_enemy);
     }
-    
+
+    difficulty_increase_timer = difficulty_increase_duration;
     spawn_rates.push_back(start_spawn_rate);
 }
 
@@ -120,9 +122,27 @@ void ofApp::update() {
     removeBullets();
     removeEnemies();
 
+    difficulty_increase_timer--;
+
+    // Increase each spawn rate by stealing half of previous spawn rate
+    if (difficulty_increase_timer == 0) {
+        double counter = 0;
+        for (int i = spawn_rates.size() - 1; i >= 0; i--) {
+            counter = spawn_rates[i] / 2;
+            spawn_rates[i] /= 2;
+            if (i > 0) {
+                spawn_rates[i - 1] += counter;
+            }
+
+            std::cout << spawn_rates[i] << ' ';
+        }
+        spawn_rates.push_back(counter);
+        difficulty_increase_timer = difficulty_increase_duration;
+    }
+
     // Spawn enemies
     for (int i = 0; i < spawn_rates.size(); i++) {
-		// i is health
+        // i is health
         if (ofRandom(0, 1) <= spawn_rates[i]) {
             int x;
             int y;
@@ -135,7 +155,7 @@ void ofApp::update() {
                     x = spawn_boundary_prop * ofGetWidth();
                 } else {
                     x = (1 - spawn_boundary_prop) * ofGetWidth();
-				}
+                }
                 y = ofRandom(0, 1) * ofGetHeight();
             } else {
                 // Vertical
@@ -148,25 +168,25 @@ void ofApp::update() {
                 x = ofRandom(0, 1) * ofGetWidth();
             }
 
-			// Decide which planet to target
+            // Decide which planet to target
             if (ofRandom(0, 2) >= 1) {
                 enemies[enemy_index]->Attack(x, y, fuel_planet->getPosition().x,
                                              fuel_planet->getPosition().y,
                                              enemy_speed, i);
-			} else {
+            } else {
                 enemies[enemy_index]->Attack(x, y, ammo_planet->getPosition().x,
                                              ammo_planet->getPosition().y,
                                              enemy_speed, i);
-			}
+            }
 
-			enemies[enemy_index]->Attack(x, y, ammo_planet->getPosition().x,
+            enemies[enemy_index]->Attack(x, y, ammo_planet->getPosition().x,
                                          ammo_planet->getPosition().y,
                                          enemy_speed, i + 1);
 
-			enemy_index++;
+            enemy_index++;
             if (enemy_index >= enemies.size()) {
                 enemy_index = 0;
-			}
+            }
         }
     }
 
