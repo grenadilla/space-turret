@@ -7,6 +7,7 @@
 #include "bullet.h"
 #include "enemy.h"
 #include "player.h"
+#include "powerup.h"
 
 #include <cmath>
 #include <set>
@@ -40,6 +41,9 @@ class ofApp : public ofBaseApp{
 
 		ofTrueTypeFont font;
 
+		ofImage blast;
+        ofImage ion;
+
 		ofxBox2d box2d;
 
 		shared_ptr<Planet> fuel_planet;
@@ -50,7 +54,10 @@ class ofApp : public ofBaseApp{
         int bullet_index;
 
 		std::vector<std::shared_ptr<Enemy>> enemies;
-        int enemy_index = 0;
+        int enemy_index;
+
+		std::vector<std::shared_ptr<Powerup>> powerups;
+        int powerup_index;
 
 		std::set<int> keys_pressed;
 

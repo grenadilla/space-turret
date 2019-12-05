@@ -247,6 +247,9 @@
     <ClCompile Include="src\player.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\powerup.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="src">
@@ -573,6 +576,9 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="src\player.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="src\powerup.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>

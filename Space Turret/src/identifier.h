@@ -10,6 +10,7 @@ class Identifier {
         Planet,
         Bullet,
 		Enemy,
+        Powerup,
     };
 
         Identifier(ShapeType type, ofxBox2dBaseShape *shape);

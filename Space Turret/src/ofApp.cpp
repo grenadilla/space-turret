@@ -1,6 +1,7 @@
 #include "ofApp.h"
 
 #include <iostream>
+#include <map>
 #include <string>
 
 #include "calculations.h"
@@ -54,6 +55,9 @@ constexpr double start_spawn_rate = 0.005;
 constexpr int difficulty_increase_duration = 1000;
 constexpr double spawn_boundary_prop = 0.05;
 
+constexpr int total_powerups = 5;
+constexpr int powerup_radius = 10;
+
 constexpr int font_size = 12;
 
 //--------------------------------------------------------------
@@ -66,6 +70,14 @@ void ofApp::setup() {
     // Load font
     ofTrueTypeFont::setGlobalDpi(72);
     font.load("ibm_bios.ttf", font_size);
+
+    // Load images
+    blast.load("images/blast.png");
+    ion.load("images/ion-cannon-blast.png");
+    std::map<Powerup::Type, ofImage> images;
+    images[Powerup::Type::Damage] = ion;
+    images[Powerup::Type::Spray] = blast;
+    Powerup::LoadImages(images);
 
     ofSetVerticalSync(true);
     ofBackground(0, 0, 0);
@@ -110,8 +122,18 @@ void ofApp::setup() {
         enemies.push_back(new_enemy);
     }
 
+    // Set up powerups
+    powerup_index = 0;
+    for (int i = 0; i < total_powerups; i++) {
+        auto new_powerup =
+            std::make_shared<Powerup>(box2d.getWorld(), powerup_radius);
+        powerups.push_back(new_powerup);
+    }
+
     difficulty_increase_timer = difficulty_increase_duration;
     spawn_rates.push_back(start_spawn_rate);
+
+    powerups[0]->Drop(300, 300, Powerup::Type::Damage, 0x4a8055);
 }
 
 //--------------------------------------------------------------
@@ -133,8 +155,6 @@ void ofApp::update() {
             if (i > 0) {
                 spawn_rates[i - 1] += counter;
             }
-
-            std::cout << spawn_rates[i] << ' ';
         }
         spawn_rates.push_back(counter);
         difficulty_increase_timer = difficulty_increase_duration;
@@ -431,6 +451,12 @@ void ofApp::draw() {
     for (auto enemy : enemies) {
         if (enemy->IsInUse()) {
             enemy->draw();
+        }
+    }
+
+    for (auto powerup : powerups) {
+        if (powerup->IsInUse()) {
+            powerup->draw();
         }
     }
 

@@ -45,9 +45,14 @@
    **12/2/19**
     - Create player class
 
-   **/12/3/19**
+   **12/3/19**
     - Ammo and fuel
 	  - Add ammo and fuel tracking
 	  - Add ammo and fuel display
 	  - Add ammo and fuel refresh if player is on correct planet
 	- Add basic enemy spawning
+
+   **12/4/19**
+    - Add powerup icons
+      - Todo: set collision parameters
+      - Implement upgrades
