@@ -7,7 +7,7 @@ class Player : public ofxBox2dCircle {
     Player();
     Player(b2World *b2dWorld, int x, int y, int radius, 
 		int health, int fuel, int ammo, int fuel_refresh, int ammo_refresh,
-		float density = 0, float bounce = 0, float friction = 0.1);
+		int attack = 1, float density = 1, float bounce = 0, float friction = 0);
 
 	int GetMaxHealth();
     void SetMaxHealth(int max_health);
@@ -25,6 +25,8 @@ class Player : public ofxBox2dCircle {
     void SetFuelRefresh(int fuel_refresh);
     int GetAmmoRefresh();
     void SetAmmoRefresh(int ammo_refresh);
+    int GetAttack();
+    void SetAttack(int attack);
 
    private:
     int max_health;
@@ -35,4 +37,5 @@ class Player : public ofxBox2dCircle {
     int ammo;
     int fuel_refresh;
     int ammo_refresh;
+    int attack;
 };

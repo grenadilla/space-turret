@@ -103,7 +103,7 @@ void ofApp::setup() {
     player_ship = make_shared<Player>(
         box2d.getWorld(), player_start_coord.first, player_start_coord.second,
         player_ship_radius, player_start_health, player_start_fuel,
-        player_start_ammo, player_fuel_refresh, player_ammo_refresh,
+        player_start_ammo, player_fuel_refresh, player_ammo_refresh, 1,
         player_density, player_bounce, player_friction);
 
     // Set up bullets
@@ -372,7 +372,7 @@ void ofApp::contactStart(ofxBox2dContactArgs &e) {
         shared_ptr<Enemy> enemy =
             std::static_pointer_cast<Enemy>(id_b->GetShape());
         bullet->SetCollided(true);
-        enemy->Damage();
+        enemy->Damage(player_ship->GetAttack());
     }
 
     if (id_b->GetType() == Identifier::ShapeType::Bullet &&
@@ -382,7 +382,7 @@ void ofApp::contactStart(ofxBox2dContactArgs &e) {
         shared_ptr<Enemy> enemy =
             std::static_pointer_cast<Enemy>(id_a->GetShape());
         bullet->SetCollided(true);
-        enemy->Damage();
+        enemy->Damage(player_ship->GetAttack());
     }
 
     if (id_a->GetType() == Identifier::ShapeType::Player &&
@@ -436,6 +436,9 @@ void ofApp::draw() {
     message = "Fuel: " + std::to_string(player_ship->GetFuel() / 10) + "/" +
               std::to_string(player_ship->GetMaxFuel() / 10);
     font.drawString(message, 20, 60);
+
+    message = "Attack: " + std::to_string(player_ship->GetAttack());
+    font.drawString(message, 20, 80);
 
     ofFill();
 
