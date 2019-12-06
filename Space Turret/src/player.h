@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ofxBox2d.h"
+#include "powerup.h"
 
 class Player : public ofxBox2dCircle {
    public:
@@ -8,6 +9,8 @@ class Player : public ofxBox2dCircle {
     Player(b2World *b2dWorld, int x, int y, int radius, 
 		int health, int fuel, int ammo, int fuel_refresh, int ammo_refresh,
 		int attack = 1, float density = 1, float bounce = 0, float friction = 0);
+
+    void Upgrade(Powerup::Type type);
 
 	int GetMaxHealth();
     void SetMaxHealth(int max_health);

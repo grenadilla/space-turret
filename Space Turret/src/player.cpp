@@ -31,6 +31,12 @@ Player::Player(b2World* b2dWorld, int x, int y, int radius, int health,
     setData(new Identifier(Identifier::ShapeType::Player, this));
 }
 
+void Player::Upgrade(Powerup::Type type) {
+    if (type == Powerup::Type::Damage) {
+        attack++;
+    }
+}
+
 int Player::GetMaxHealth() { return max_health; }
 
 void Player::SetMaxHealth(int max_health) { this->max_health = max_health; }

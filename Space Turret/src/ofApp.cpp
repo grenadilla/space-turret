@@ -140,9 +140,8 @@ void ofApp::setup() {
 void ofApp::update() {
     box2d.update();
 
-    // Remove out of bounds bullets
-    removeBullets();
-    removeEnemies();
+    // Remove out of bounds or not in use preloaded objects
+    removePreloadedObjects();
 
     difficulty_increase_timer--;
 
@@ -400,6 +399,22 @@ void ofApp::contactStart(ofxBox2dContactArgs &e) {
         enemy->SetCollided(true);
         player_ship->SetHealth(player_ship->GetHealth() - 1);
     }
+
+    if (id_a->GetType() == Identifier::ShapeType::Player &&
+        id_b->GetType() == Identifier::ShapeType::Powerup) {
+        shared_ptr<Powerup> powerup =
+            std::static_pointer_cast<Powerup>(id_b->GetShape());
+        powerup->SetCollided(true);
+        player_ship->Upgrade(powerup->GetType());
+    }
+
+    if (id_b->GetType() == Identifier::ShapeType::Player &&
+        id_a->GetType() == Identifier::ShapeType::Powerup) {
+        shared_ptr<Powerup> powerup =
+            std::static_pointer_cast<Powerup>(id_a->GetShape());
+        powerup->SetCollided(true);
+        player_ship->Upgrade(powerup->GetType());
+    }
 }
 
 void ofApp::contactEnd(ofxBox2dContactArgs &e) {
@@ -469,26 +484,29 @@ void ofApp::draw() {
     fuel_planet->draw();
 }
 
-void ofApp::removeBullets() {
+void ofApp::removePreloadedObjects() {
     // Remove bullets if out of bounds or collided
-    for (int i = 0; i < bullets.size(); i++) {
-        ofVec2f position = bullets[i]->getPosition();
+    for (auto bullet : bullets) {
+        ofVec2f position = bullet->getPosition();
         if (position.x < 0 || position.x > ofGetWindowWidth() ||
             position.y < 0 || position.y > ofGetWindowHeight() ||
-            bullets[i]->DidCollide()) {
-            bullets[i]->Reset();
+            bullet->DidCollide()) {
+            bullet->Reset();
         }
     }
-}
 
-void ofApp::removeEnemies() {
-    // Remove bullets if out of bounds or collided
-    for (int i = 0; i < enemies.size(); i++) {
-        ofVec2f position = enemies[i]->getPosition();
+    for (auto enemy : enemies) {
+        ofVec2f position = enemy->getPosition();
         if (position.x < 0 || position.x > ofGetWindowWidth() ||
             position.y < 0 || position.y > ofGetWindowHeight() ||
-            enemies[i]->DidCollide()) {
-            enemies[i]->Reset();
+            enemy->DidCollide()) {
+            enemy->Reset();
+        }
+    }
+
+    for (auto powerup : powerups) {
+        if (powerup->DidCollide()) {
+            powerup->Reset();
         }
     }
 }

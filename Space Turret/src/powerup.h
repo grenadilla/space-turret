@@ -20,6 +20,8 @@ class Powerup : public ofxBox2dCircle, public Preloaded {
     void Reset();
     void draw();
 
+    Type GetType();
+
   private:
     static std::map<Powerup::Type, ofImage> images;
 

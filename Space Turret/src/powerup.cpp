@@ -64,3 +64,5 @@ void Powerup::draw() {
             getRadius() * std::sin(kLeftCornerDegree * kDegreeRadMult),
         square_side_length, square_side_length);
 }
+
+Powerup::Type Powerup::GetType() { return type; }

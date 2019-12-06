@@ -64,6 +64,5 @@ class ofApp : public ofBaseApp{
 		int difficulty_increase_timer;
         std::vector<double> spawn_rates;
 
-		void removeBullets();
-        void removeEnemies();
+		void removePreloadedObjects();
 };
