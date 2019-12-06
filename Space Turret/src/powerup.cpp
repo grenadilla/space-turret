@@ -2,6 +2,9 @@
 
 #include "identifier.h"
 
+const double kDegreeRadMult = PI / 180;
+const int kLeftCornerDegree = 225;
+
 constexpr int x_hiding = -20;
 constexpr int y_hiding = -40;
 
@@ -46,6 +49,13 @@ void Powerup::Drop(int x, int y, Type type, int color) {
 void Powerup::draw() {
     ofFill();
     ofSetHexColor(color);
-    ofxBox2dCircle::draw();
-    Powerup::images[type].draw(getPosition().x, getPosition().y);
+    ofDrawCircle(getPosition().x, getPosition().y, getRadius());
+
+    int square_side_length = getRadius() * 2 / std::sqrt(2);
+    Powerup::images[type].draw(
+        getPosition().x +
+            getRadius() * std::cos(kLeftCornerDegree * kDegreeRadMult),
+        getPosition().y +
+            getRadius() * std::sin(kLeftCornerDegree * kDegreeRadMult),
+        square_side_length, square_side_length);
 }

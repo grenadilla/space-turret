@@ -56,7 +56,7 @@ constexpr int difficulty_increase_duration = 1000;
 constexpr double spawn_boundary_prop = 0.05;
 
 constexpr int total_powerups = 5;
-constexpr int powerup_radius = 10;
+constexpr int powerup_radius = 20;
 
 constexpr int font_size = 12;
 
