@@ -27,6 +27,10 @@ Enemy::Enemy(b2World* b2World, int size, float density) {
     triangulate();
     create(b2World);
 
+    b2Filter filter;
+    filter.categoryBits = Identifier::enemy_category;
+    setFilterData(filter);
+
     setData(new Identifier(Identifier::ShapeType::Enemy, this));
 
     collided = false;

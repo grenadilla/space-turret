@@ -56,3 +56,9 @@
     - Add powerup icons
       - Todo: set collision parameters
       - Implement upgrades
+
+   **12/5/19**
+    - Add attack stat
+    - Implement collecting powerups
+      - Todo: add more powerup types
+    - Add collision rules

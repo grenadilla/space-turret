@@ -12,6 +12,11 @@ Planet::Planet(b2World *b2dWorld, int x, int y, int radius, float density,
     setPhysics(density, bounce, friction);
     setup(b2dWorld, x, y, radius);
     body->SetType(b2_staticBody);
+
+    b2Filter filter;
+    filter.categoryBits = Identifier::planet_category;
+    setFilterData(filter);
+
     setData(new Identifier(Identifier::ShapeType::Planet, this));
 }
 
