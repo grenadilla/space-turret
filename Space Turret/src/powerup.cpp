@@ -21,6 +21,11 @@ Powerup::Powerup(b2World* b2dWorld, int radius, float density, float bounce,
     collided = false;
     body->SetActive(false);
 
+    //Set collision categories and filter
+    b2Filter filter;
+    filter.maskBits = Identifier::player_category;
+    setFilterData(filter);
+
     // Use below to prevent collision between powerups and enemies
     // fixture.filter.groupIndex =
 }

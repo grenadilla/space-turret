@@ -5,15 +5,15 @@
 
 Player::Player() = default;
 
-Player::Player(b2World * b2dWorld, int x, int y, int radius, int health,
-	int fuel, int ammo, int fuel_refresh, int ammo_refresh,
-	float density, float bounce, float friction) {
+Player::Player(b2World* b2dWorld, int x, int y, int radius, int health,
+               int fuel, int ammo, int fuel_refresh, int ammo_refresh,
+               float density, float bounce, float friction) {
     setPhysics(density, bounce, friction);
     setup(b2dWorld, x, y, radius);
     // Set fixed rotation so player ship doesn't roll around with friction
     setFixedRotation(true);
 
-	max_health = health;
+    max_health = health;
     max_fuel = fuel;
     max_ammo = ammo;
     this->health = health;
@@ -21,6 +21,11 @@ Player::Player(b2World * b2dWorld, int x, int y, int radius, int health,
     this->ammo = ammo;
     this->fuel_refresh = fuel_refresh;
     this->ammo_refresh = ammo_refresh;
+
+    // Set collision filters
+    b2Filter filter;
+    filter.categoryBits = Identifier::player_category;
+    setFilterData(filter);
 
     setData(new Identifier(Identifier::ShapeType::Player, this));
 }
