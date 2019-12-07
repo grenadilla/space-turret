@@ -12,6 +12,8 @@ class Player : public ofxBox2dCircle {
 
     void Upgrade(Powerup::Type type);
 
+    static constexpr int max_spray = 3;
+
 	int GetMaxHealth();
     void SetMaxHealth(int max_health);
     int GetHealth();
@@ -30,6 +32,8 @@ class Player : public ofxBox2dCircle {
     void SetAmmoRefresh(int ammo_refresh);
     int GetAttack();
     void SetAttack(int attack);
+    int GetSpray();
+    void SetSpray(int spray);
 
    private:
     int max_health;
@@ -41,4 +45,5 @@ class Player : public ofxBox2dCircle {
     int fuel_refresh;
     int ammo_refresh;
     int attack;
+    int spray;
 };

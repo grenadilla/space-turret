@@ -62,3 +62,6 @@
    - Implement collecting powerups
      - Todo: add more powerup types
    - Add collision rules
+
+ - **/12/7/19**
+   - Implement upgrades for health, ammo, fuel, and attack type

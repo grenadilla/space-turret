@@ -20,7 +20,7 @@ const std::pair<int, int> ammo_planet_coord(200, 300);
 const std::pair<int, int> player_start_coord(500, 300);
 
 constexpr int player_start_health = 3;
-constexpr int player_start_fuel = 5000;
+constexpr int player_start_fuel = 2000;
 constexpr int player_start_ammo = 10;
 constexpr int player_fuel_refresh = 3;
 constexpr int player_ammo_refresh = 1;

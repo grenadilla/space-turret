@@ -35,6 +35,23 @@ void Player::Upgrade(Powerup::Type type) {
     if (type == Powerup::Type::Damage) {
         attack++;
     }
+    if (type == Powerup::Type::Spray) {
+        if (spray > Player::max_spray) {
+            spray = Player::max_spray;
+        }
+    }
+    if (type == Powerup::Type::Ammo) {
+        max_ammo += Powerup::ammo_cap_increase;
+    }
+    if (type == Powerup::Type::Fuel) {
+        max_fuel += Powerup::fuel_cap_increase;
+    }
+    if (type == Powerup::Type::Health) {
+        health += Powerup::health_restore;
+        if (health > max_health) {
+            health = max_health;
+        }
+    }
 }
 
 int Player::GetMaxHealth() { return max_health; }
@@ -72,3 +89,7 @@ void Player::SetAmmoRefresh(int ammo_refresh) { this->ammo_refresh = ammo_refres
 int Player::GetAttack() { return attack; }
 
 void Player::SetAttack(int attack) { this->attack = attack; }
+
+int Player::GetSpray() { return spray; }
+
+void Player::SetSpray(int spray) { this->spray = spray; }
