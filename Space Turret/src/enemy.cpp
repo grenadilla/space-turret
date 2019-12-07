@@ -3,7 +3,7 @@
 
 #include <iostream>
 
-const double kDegreeRadMult = PI / 180;
+constexpr double kDegreeRadMult = PI / 180;
 
 constexpr int x_hiding = -20;
 constexpr int y_hiding = -20;

@@ -2,8 +2,8 @@
 
 #include "identifier.h"
 
-const double kDegreeRadMult = PI / 180;
-const int kLeftCornerDegree = 225;
+constexpr double kDegreeRadMult = PI / 180;
+constexpr int kLeftCornerDegree = 225;
 
 constexpr int x_hiding = -20;
 constexpr int y_hiding = -40;

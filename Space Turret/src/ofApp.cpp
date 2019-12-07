@@ -7,7 +7,7 @@
 #include "calculations.h"
 #include "identifier.h"
 
-const double kDegreeRadMult = PI / 180;
+constexpr double kDegreeRadMult = PI / 180;
 
 constexpr float fps = 60.0;
 
@@ -31,6 +31,7 @@ constexpr float player_friction = 0.1;
 
 constexpr int fuel_planet_gravity = 250;
 constexpr int ammo_planet_gravity = 250;
+constexpr int planet_color = 0x90d4e3;
 
 constexpr int max_speed = 10;
 constexpr int engine_force_mult = 20;
@@ -79,6 +80,9 @@ void ofApp::setup() {
     images[Powerup::Type::Spray] = blast;
     Powerup::LoadImages(images);
 
+    fuel_icon.load("images/fuel-tank.png");
+    ammo_icon.load("images/reload-gun-barrel.png");
+
     ofSetVerticalSync(true);
     ofBackground(0, 0, 0);
     ofSetLogLevel(OF_LOG_NOTICE);
@@ -94,11 +98,11 @@ void ofApp::setup() {
 
     fuel_planet =
         make_shared<Planet>(box2d.getWorld(), fuel_planet_coord.first,
-                            fuel_planet_coord.second, fuel_planet_radius);
+                            fuel_planet_coord.second, fuel_planet_radius, planet_color, &fuel_icon);
 
     ammo_planet =
         make_shared<Planet>(box2d.getWorld(), ammo_planet_coord.first,
-                            ammo_planet_coord.second, ammo_planet_radius);
+                            ammo_planet_coord.second, ammo_planet_radius, planet_color, &ammo_icon);
 
     player_ship = make_shared<Player>(
         box2d.getWorld(), player_start_coord.first, player_start_coord.second,
@@ -477,8 +481,6 @@ void ofApp::draw() {
             powerup->draw();
         }
     }
-
-    ofSetHexColor(0x90d4e3);
 
     ammo_planet->draw();
     fuel_planet->draw();

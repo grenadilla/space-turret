@@ -43,6 +43,8 @@ class ofApp : public ofBaseApp{
 
 		ofImage blast;
         ofImage ion;
+        ofImage fuel_icon;
+        ofImage ammo_icon;
 
 		ofxBox2d box2d;
 
