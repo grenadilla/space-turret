@@ -115,7 +115,7 @@ void ofApp::setup() {
     difficulty_increase_timer = difficulty_increase_duration;
     spawn_rates.push_back(start_spawn_rate);
 
-    powerups[0]->Drop(300, 300, Powerup::Type::Damage, 0x4a8055);
+    powerups[0]->Drop(300, 300, Powerup::Type::Spray, 0x4a8055);
 }
 
 //--------------------------------------------------------------
@@ -151,14 +151,48 @@ void ofApp::update() {
 
     if (bullet_timer == 0 && player_ship->GetAmmo() > 0 &&
         keys_pressed.count(' ')) {
-        auto bullet = bullets[bullet_index];
-        bullet->Shoot(player_ship->getPosition().x,
-                      player_ship->getPosition().y, player_ship->getRadius(),
-                      player_ship->getRotation(), bullet_speed);
-        bullet_index++;
-        if (bullet_index >= bullets.size()) {
-            bullet_index = 0;
+
+        auto bullet1 = bullets[bullet_index];
+        auto bullet2 = bullets[(bullet_index + 1) % bullets.size()];
+        auto bullet3 = bullets[(bullet_index + 2) % bullets.size()];
+
+        // Shooting patterns:
+        // 1 - Single bullet
+        // 2 - Two bullets side by side, symetric with the ship
+        // 3 - Three bullets, with middle one centered with ship
+        if (player_ship->GetSpray() == 1 || player_ship->GetSpray() == 3) {
+            bullet1->Shoot(player_ship->getPosition().x,
+                           player_ship->getPosition().y,
+                           player_ship->getRadius(), player_ship->getRotation(),
+                           bullet_speed);
+            bullet_index++;
         }
+
+        if (player_ship->GetSpray() == 2) {
+            bullet1->Shoot(player_ship->getPosition().x,
+                           player_ship->getPosition().y,
+                           player_ship->getRadius(), player_ship->getRotation(),
+                           bullet_speed, -20);
+            bullet2->Shoot(player_ship->getPosition().x,
+                           player_ship->getPosition().y,
+                           player_ship->getRadius(), player_ship->getRotation(),
+                           bullet_speed, 20);
+            bullet_index += 2;
+        }
+
+        if (player_ship->GetSpray() == 3) {
+            bullet2->Shoot(player_ship->getPosition().x,
+                           player_ship->getPosition().y,
+                           player_ship->getRadius(),
+                           player_ship->getRotation(), bullet_speed, -30);
+            bullet3->Shoot(player_ship->getPosition().x,
+                           player_ship->getPosition().y,
+                           player_ship->getRadius(),
+                           player_ship->getRotation(), bullet_speed, 30);
+            bullet_index += 2;
+        }
+        
+        bullet_index %= bullets.size();
         bullet_timer = bullet_interval;
         player_ship->SetAmmo(player_ship->GetAmmo() - 1);
     }

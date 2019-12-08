@@ -9,6 +9,6 @@ class Bullet : public ofxBox2dRect, public virtual Preloaded {
     Bullet();
     Bullet(b2World *b2World, int height, int width, float density = 1);
     void Shoot(int x, int y, int player_ship_radius, float rotation,
-               int bullet_speed);
+               int bullet_speed, int offset_angle = 0);
     void Reset();
 };

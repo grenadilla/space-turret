@@ -34,9 +34,9 @@ Bullet::Bullet(b2World *b2World, int height, int width, float density) {
 }
 
 void Bullet::Shoot(int x, int y, int player_ship_radius, float rotation,
-	int bullet_speed) {
-    setPosition(x + std::cos(rotation * kDegreeRadMult) * player_ship_radius,
-                y + std::sin(rotation * kDegreeRadMult) * player_ship_radius);
+	int bullet_speed, int offset_angle) {
+    setPosition(x + std::cos((rotation + offset_angle) * kDegreeRadMult) * player_ship_radius,
+                y + std::sin((rotation + offset_angle) * kDegreeRadMult) * player_ship_radius);
 
 	setRotation(rotation);
 

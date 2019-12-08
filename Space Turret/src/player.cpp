@@ -3,6 +3,8 @@
 #include "identifier.h"
 #include "ofMain.h"
 
+constexpr int max_spray = 3;
+
 Player::Player() = default;
 
 Player::Player(b2World* b2dWorld, int x, int y, int radius, int health,
@@ -22,6 +24,7 @@ Player::Player(b2World* b2dWorld, int x, int y, int radius, int health,
     this->fuel_refresh = fuel_refresh;
     this->ammo_refresh = ammo_refresh;
     this->attack = attack;
+    spray = 1;
 
     // Set collision filters
     b2Filter filter;
@@ -50,6 +53,12 @@ void Player::Upgrade(Powerup::Type type) {
         health += Powerup::health_restore;
         if (health > max_health) {
             health = max_health;
+        }
+    }
+    if (type == Powerup::Type::Spray) {
+        spray++;
+        if (spray > max_spray) {
+            spray = max_spray;
         }
     }
 }
