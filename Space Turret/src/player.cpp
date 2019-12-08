@@ -32,33 +32,42 @@ Player::Player(b2World* b2dWorld, int x, int y, int radius, int health,
     setData(new Identifier(Identifier::ShapeType::Player, this));
 }
 
-void Player::Upgrade(Powerup::Type type) {
+std::string Player::Upgrade(Powerup::Type type) {
     if (type == Powerup::Type::Damage) {
         attack++;
+        return "+1 Attack";
     }
-    if (type == Powerup::Type::Spray) {
-        if (spray > Player::max_spray) {
-            spray = Player::max_spray;
-        }
-    }
+
     if (type == Powerup::Type::Ammo) {
         max_ammo += Powerup::ammo_cap_increase;
+        return "+" + std::to_string(Powerup::ammo_cap_increase) +
+               " ammo storage";
     }
+
     if (type == Powerup::Type::Fuel) {
         max_fuel += Powerup::fuel_cap_increase;
+        return "+" + std::to_string(Powerup::fuel_cap_increase / 10) +
+               " fuel storage";
     }
+
     if (type == Powerup::Type::Health) {
         health += Powerup::health_restore;
         if (health > max_health) {
             health = max_health;
         }
+        return "Restore " + std::to_string(Powerup::health_restore) + " health";
     }
+
     if (type == Powerup::Type::Spray) {
         spray++;
         if (spray > max_spray) {
             spray = max_spray;
+        } else {
+            return "Attack powerup!";
         }
     }
+
+    return "";
 }
 
 int Player::GetMaxHealth() { return max_health; }
@@ -87,11 +96,15 @@ void Player::SetAmmo(int ammo) { this->ammo = ammo; }
 
 int Player::GetFuelRefresh() { return fuel_refresh; }
 
-void Player::SetFuelRefresh(int fuel_refresh) { this->fuel_refresh = fuel_refresh; }
+void Player::SetFuelRefresh(int fuel_refresh) {
+    this->fuel_refresh = fuel_refresh;
+}
 
 int Player::GetAmmoRefresh() { return ammo_refresh; }
 
-void Player::SetAmmoRefresh(int ammo_refresh) { this->ammo_refresh = ammo_refresh; }
+void Player::SetAmmoRefresh(int ammo_refresh) {
+    this->ammo_refresh = ammo_refresh;
+}
 
 int Player::GetAttack() { return attack; }
 

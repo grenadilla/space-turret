@@ -53,7 +53,7 @@ constexpr int enemy_size = 30;
 constexpr int total_enemies = 15;
 constexpr int enemy_speed = 1;
 constexpr double start_spawn_rate = 0.005;
-constexpr int difficulty_increase_duration = 1000;
+constexpr int difficulty_increase_duration = 10000;
 constexpr double spawn_boundary_prop = 0.05;
 
 constexpr int total_powerups = 5;
@@ -68,6 +68,7 @@ const std::map<Powerup::Type, int> powerup_colors = {
     std::make_pair(Powerup::Type::Spray, 0x34edc2)};
 
 constexpr int font_size = 12;
+constexpr int message_display_time = 180;
 
 //--------------------------------------------------------------
 void ofApp::setup() {
@@ -91,7 +92,7 @@ void ofApp::setup() {
     images[Powerup::Type::Spray] = blast;
     images[Powerup::Type::Fuel] = oil_drum;
     images[Powerup::Type::Health] = heart_plus;
-    images[Powerup::Type::Ammo] = oil_drum;
+    images[Powerup::Type::Ammo] = heavy_bullets;
     Powerup::LoadImages(images);
 
     fuel_icon.load("images/fuel-tank.png");
@@ -141,6 +142,10 @@ void ofApp::update() {
     if (powerup_to_drop != nullptr) {
         powerup_to_drop->Drop();
         powerup_to_drop = nullptr;
+    }
+
+    if (powerup_message_timer > 0) {
+        powerup_message_timer--;
     }
 
     difficulty_increase_timer--;
@@ -395,7 +400,8 @@ void ofApp::contactStart(ofxBox2dContactArgs &e) {
         shared_ptr<Powerup> powerup =
             std::static_pointer_cast<Powerup>(id_b->GetShape());
         powerup->SetCollided(true);
-        player_ship->Upgrade(powerup->GetType());
+        powerup_message = player_ship->Upgrade(powerup->GetType());
+        powerup_message_timer = message_display_time;
     }
 
     if (id_b->GetType() == Identifier::ShapeType::Player &&
@@ -403,7 +409,8 @@ void ofApp::contactStart(ofxBox2dContactArgs &e) {
         shared_ptr<Powerup> powerup =
             std::static_pointer_cast<Powerup>(id_a->GetShape());
         powerup->SetCollided(true);
-        player_ship->Upgrade(powerup->GetType());
+        powerup_message = player_ship->Upgrade(powerup->GetType());
+        powerup_message_timer = message_display_time;
     }
 }
 
@@ -444,6 +451,10 @@ void ofApp::draw() {
 
     message = "Attack: " + std::to_string(player_ship->GetAttack());
     font.drawString(message, 20, 80);
+
+    if (powerup_message_timer > 0) {
+        font.drawString(powerup_message, 300, 40);
+    }
 
     ofFill();
 
@@ -606,8 +617,9 @@ void ofApp::SpawnPowerup(int x, int y) {
         type = Powerup::Type::Ammo;
     }
 
-    // Have to use Prepare() instead of Drop() because objects cannot be moved outside of setup or update,
-    // and this method is called inside an event listener
+    // Have to use Prepare() instead of Drop() because objects cannot be moved
+    // outside of setup or update, and this method is called inside an event
+    // listener
     powerups[powerup_index]->Prepare(x, y, type, powerup_colors.at(type));
     powerup_to_drop = powerups[powerup_index];
     powerup_index++;

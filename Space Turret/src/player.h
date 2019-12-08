@@ -3,6 +3,8 @@
 #include "ofxBox2d.h"
 #include "powerup.h"
 
+#include <string>
+
 class Player : public ofxBox2dCircle {
    public:
     Player();
@@ -10,7 +12,7 @@ class Player : public ofxBox2dCircle {
 		int health, int fuel, int ammo, int fuel_refresh, int ammo_refresh,
 		int attack = 1, float density = 1, float bounce = 0, float friction = 0);
 
-    void Upgrade(Powerup::Type type);
+    std::string Upgrade(Powerup::Type type);
 
     static constexpr int max_spray = 3;
 

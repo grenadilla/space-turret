@@ -13,6 +13,7 @@
 #include <set>
 #include <vector>
 #include <memory>
+#include <string>
 
 class ofApp : public ofBaseApp{
 
@@ -41,6 +42,8 @@ class ofApp : public ofBaseApp{
 		void contactStart(ofxBox2dContactArgs &e);
         void contactEnd(ofxBox2dContactArgs &e);
 
+		ofxBox2d box2d;
+
 		ofSoundPlayer background_music;
 
 		ofTrueTypeFont font;
@@ -56,7 +59,8 @@ class ofApp : public ofBaseApp{
         ofImage fuel_icon;
         ofImage ammo_icon;
 
-		ofxBox2d box2d;
+		std::string powerup_message;
+        int powerup_message_timer;
 
 		shared_ptr<Planet> fuel_planet;
         shared_ptr<Planet> ammo_planet;
