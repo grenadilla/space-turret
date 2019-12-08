@@ -44,7 +44,12 @@ class ofApp : public ofBaseApp{
 
 		ofxBox2d box2d;
 
+		// Music and sound
 		ofSoundPlayer background_music;
+        ofSoundPlayer laser_sound;
+        ofSoundPlayer damage_sound;
+        ofSoundPlayer powerup_sound;
+        ofSoundPlayer explosion_sound;
 
 		ofTrueTypeFont font;
 

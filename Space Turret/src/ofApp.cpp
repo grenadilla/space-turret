@@ -73,9 +73,24 @@ constexpr int message_display_time = 180;
 //--------------------------------------------------------------
 void ofApp::setup() {
     // Background music: Tilt by Avaren https://www.avarenmusic.co/
-    /*background_music.load("Tilt.mp3");
+    background_music.load("sounds/Tilt.mp3");
     background_music.play();
-    background_music.setLoop(true);*/
+    background_music.setLoop(true);
+    damage_sound.setVolume(0.7);
+
+    laser_sound.load("sounds/laser.wav");
+    laser_sound.setMultiPlay(true);
+    laser_sound.setVolume(0.2);
+
+    powerup_sound.load("sounds/powerup.wav");
+    powerup_sound.setMultiPlay(true);
+    damage_sound.setVolume(0.7);
+
+    damage_sound.load("sounds/damage.wav");
+    damage_sound.setMultiPlay(true);
+
+    explosion_sound.load("sounds/explosion.wav");
+    explosion_sound.setMultiPlay(true);
 
     // Load font
     ofTrueTypeFont::setGlobalDpi(72);
@@ -174,6 +189,8 @@ void ofApp::update() {
 
     if (bullet_timer == 0 && player_ship->GetAmmo() > 0 &&
         keys_pressed.count(' ')) {
+        laser_sound.play();
+
         auto bullet1 = bullets[bullet_index];
         auto bullet2 = bullets[(bullet_index + 1) % bullets.size()];
         auto bullet3 = bullets[(bullet_index + 2) % bullets.size()];
@@ -345,6 +362,7 @@ void ofApp::contactStart(ofxBox2dContactArgs &e) {
             std::static_pointer_cast<Enemy>(id_a->GetShape());
         enemy->SetCollided(true);
         player_ship->SetHealth(player_ship->GetHealth() - 1);
+        damage_sound.play();
     }
 
     if (id_b->GetType() == Identifier::ShapeType::Enemy &&
@@ -353,6 +371,7 @@ void ofApp::contactStart(ofxBox2dContactArgs &e) {
             std::static_pointer_cast<Bullet>(id_b->GetShape());
         enemy->SetCollided(true);
         player_ship->SetHealth(player_ship->GetHealth() - 1);
+        damage_sound.play();
     }
 
     if (id_a->GetType() == Identifier::ShapeType::Bullet &&
@@ -364,6 +383,7 @@ void ofApp::contactStart(ofxBox2dContactArgs &e) {
         bullet->SetCollided(true);
         if (enemy->Damage(player_ship->GetAttack())) {
             SpawnPowerup(enemy->getPosition().x, enemy->getPosition().y);
+            explosion_sound.play();
         }
     }
 
@@ -376,6 +396,7 @@ void ofApp::contactStart(ofxBox2dContactArgs &e) {
         bullet->SetCollided(true);
         if (enemy->Damage(player_ship->GetAttack())) {
             SpawnPowerup(enemy->getPosition().x, enemy->getPosition().y);
+            explosion_sound.play();
         }
     }
 
@@ -385,6 +406,7 @@ void ofApp::contactStart(ofxBox2dContactArgs &e) {
             std::static_pointer_cast<Enemy>(id_b->GetShape());
         enemy->SetCollided(true);
         player_ship->SetHealth(player_ship->GetHealth() - 1);
+        damage_sound.play();
     }
 
     if (id_b->GetType() == Identifier::ShapeType::Player &&
@@ -393,6 +415,7 @@ void ofApp::contactStart(ofxBox2dContactArgs &e) {
             std::static_pointer_cast<Enemy>(id_a->GetShape());
         enemy->SetCollided(true);
         player_ship->SetHealth(player_ship->GetHealth() - 1);
+        damage_sound.play();
     }
 
     if (id_a->GetType() == Identifier::ShapeType::Player &&
@@ -402,6 +425,7 @@ void ofApp::contactStart(ofxBox2dContactArgs &e) {
         powerup->SetCollided(true);
         powerup_message = player_ship->Upgrade(powerup->GetType());
         powerup_message_timer = message_display_time;
+        powerup_sound.play();
     }
 
     if (id_b->GetType() == Identifier::ShapeType::Player &&
@@ -411,6 +435,7 @@ void ofApp::contactStart(ofxBox2dContactArgs &e) {
         powerup->SetCollided(true);
         powerup_message = player_ship->Upgrade(powerup->GetType());
         powerup_message_timer = message_display_time;
+        powerup_sound.play();
     }
 }
 
