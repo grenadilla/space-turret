@@ -36,6 +36,7 @@ class ofApp : public ofBaseApp{
 	private:
         void Preload();
         void SpawnEnemy();
+        void SpawnPowerup(int x, int y);
 
 		void contactStart(ofxBox2dContactArgs &e);
         void contactEnd(ofxBox2dContactArgs &e);
@@ -44,8 +45,14 @@ class ofApp : public ofBaseApp{
 
 		ofTrueTypeFont font;
 
+		// Powerup images
 		ofImage blast;
         ofImage ion;
+        ofImage heart_plus;
+        ofImage oil_drum;
+        ofImage heavy_bullets;
+
+		// Planet images
         ofImage fuel_icon;
         ofImage ammo_icon;
 
@@ -63,6 +70,7 @@ class ofApp : public ofBaseApp{
 
 		std::vector<std::shared_ptr<Powerup>> powerups;
         int powerup_index;
+        shared_ptr<Powerup> powerup_to_drop = nullptr;
 
 		std::set<int> keys_pressed;
 

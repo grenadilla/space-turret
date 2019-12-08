@@ -31,6 +31,7 @@ Bullet::Bullet(b2World *b2World, int height, int width, float density) {
 
 	collided = false;
     body->SetActive(false);
+    in_use = false;
 }
 
 void Bullet::Shoot(int x, int y, int player_ship_radius, float rotation,

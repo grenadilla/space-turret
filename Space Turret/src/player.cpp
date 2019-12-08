@@ -3,8 +3,6 @@
 #include "identifier.h"
 #include "ofMain.h"
 
-constexpr int max_spray = 3;
-
 Player::Player() = default;
 
 Player::Player(b2World* b2dWorld, int x, int y, int radius, int health,

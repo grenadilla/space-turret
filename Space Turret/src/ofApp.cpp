@@ -58,6 +58,14 @@ constexpr double spawn_boundary_prop = 0.05;
 
 constexpr int total_powerups = 5;
 constexpr int powerup_radius = 20;
+constexpr double powerup_drop_rate = 0.2;
+constexpr double spray_drop_rate = 0.2;
+const std::map<Powerup::Type, int> powerup_colors = {
+    std::make_pair(Powerup::Type::Ammo, 0xe61045),
+    std::make_pair(Powerup::Type::Damage, 0x1f31b8),
+    std::make_pair(Powerup::Type::Fuel, 0x9e6e33),
+    std::make_pair(Powerup::Type::Health, 0xed3494),
+    std::make_pair(Powerup::Type::Spray, 0x34edc2)};
 
 constexpr int font_size = 12;
 
@@ -75,9 +83,15 @@ void ofApp::setup() {
     // Load images
     blast.load("images/blast.png");
     ion.load("images/ion-cannon-blast.png");
+    heart_plus.load("images/heart-plus.png");
+    oil_drum.load("images/oil-drum.png");
+    heavy_bullets.load("images/heavy-bullets.png");
     std::map<Powerup::Type, ofImage> images;
     images[Powerup::Type::Damage] = ion;
     images[Powerup::Type::Spray] = blast;
+    images[Powerup::Type::Fuel] = oil_drum;
+    images[Powerup::Type::Health] = heart_plus;
+    images[Powerup::Type::Ammo] = oil_drum;
     Powerup::LoadImages(images);
 
     fuel_icon.load("images/fuel-tank.png");
@@ -114,8 +128,6 @@ void ofApp::setup() {
 
     difficulty_increase_timer = difficulty_increase_duration;
     spawn_rates.push_back(start_spawn_rate);
-
-    powerups[0]->Drop(300, 300, Powerup::Type::Spray, 0x4a8055);
 }
 
 //--------------------------------------------------------------
@@ -124,6 +136,12 @@ void ofApp::update() {
 
     // Remove out of bounds or not in use preloaded objects
     removePreloadedObjects();
+
+    // Spawn powerups
+    if (powerup_to_drop != nullptr) {
+        powerup_to_drop->Drop();
+        powerup_to_drop = nullptr;
+    }
 
     difficulty_increase_timer--;
 
@@ -151,7 +169,6 @@ void ofApp::update() {
 
     if (bullet_timer == 0 && player_ship->GetAmmo() > 0 &&
         keys_pressed.count(' ')) {
-
         auto bullet1 = bullets[bullet_index];
         auto bullet2 = bullets[(bullet_index + 1) % bullets.size()];
         auto bullet3 = bullets[(bullet_index + 2) % bullets.size()];
@@ -183,15 +200,15 @@ void ofApp::update() {
         if (player_ship->GetSpray() == 3) {
             bullet2->Shoot(player_ship->getPosition().x,
                            player_ship->getPosition().y,
-                           player_ship->getRadius(),
-                           player_ship->getRotation(), bullet_speed, -30);
+                           player_ship->getRadius(), player_ship->getRotation(),
+                           bullet_speed, -30);
             bullet3->Shoot(player_ship->getPosition().x,
                            player_ship->getPosition().y,
-                           player_ship->getRadius(),
-                           player_ship->getRotation(), bullet_speed, 30);
+                           player_ship->getRadius(), player_ship->getRotation(),
+                           bullet_speed, 30);
             bullet_index += 2;
         }
-        
+
         bullet_index %= bullets.size();
         bullet_timer = bullet_interval;
         player_ship->SetAmmo(player_ship->GetAmmo() - 1);
@@ -340,7 +357,9 @@ void ofApp::contactStart(ofxBox2dContactArgs &e) {
         shared_ptr<Enemy> enemy =
             std::static_pointer_cast<Enemy>(id_b->GetShape());
         bullet->SetCollided(true);
-        enemy->Damage(player_ship->GetAttack());
+        if (enemy->Damage(player_ship->GetAttack())) {
+            SpawnPowerup(enemy->getPosition().x, enemy->getPosition().y);
+        }
     }
 
     if (id_b->GetType() == Identifier::ShapeType::Bullet &&
@@ -350,7 +369,9 @@ void ofApp::contactStart(ofxBox2dContactArgs &e) {
         shared_ptr<Enemy> enemy =
             std::static_pointer_cast<Enemy>(id_a->GetShape());
         bullet->SetCollided(true);
-        enemy->Damage(player_ship->GetAttack());
+        if (enemy->Damage(player_ship->GetAttack())) {
+            SpawnPowerup(enemy->getPosition().x, enemy->getPosition().y);
+        }
     }
 
     if (id_a->GetType() == Identifier::ShapeType::Player &&
@@ -553,6 +574,45 @@ void ofApp::SpawnEnemy() {
                 enemy_index = 0;
             }
         }
+    }
+}
+
+void ofApp::SpawnPowerup(int x, int y) {
+    if (ofRandom(0, 1) > powerup_drop_rate) {
+        return;
+    }
+
+    double randNum = ofRandom(0, 1);
+
+    Powerup::Type type;
+    if (player_ship->GetAttack() < spawn_rates.size()) {
+        // Only increase player's attack if it is less than max enemy health
+        type = Powerup::Type::Damage;
+    }
+
+    else if (ofRandom(0, 1) < spray_drop_rate) {
+        type = Powerup::Type::Spray;
+    }
+
+    else if (randNum < 0.33) {
+        type = Powerup::Type::Fuel;
+    }
+
+    else if (randNum >= 0.33 && randNum < 0.67) {
+        type = Powerup::Type::Health;
+    }
+
+    else {
+        type = Powerup::Type::Ammo;
+    }
+
+    // Have to use Prepare() instead of Drop() because objects cannot be moved outside of setup or update,
+    // and this method is called inside an event listener
+    powerups[powerup_index]->Prepare(x, y, type, powerup_colors.at(type));
+    powerup_to_drop = powerups[powerup_index];
+    powerup_index++;
+    if (powerup_index >= powerups.size()) {
+        powerup_index = 0;
     }
 }
 

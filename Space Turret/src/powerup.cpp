@@ -20,6 +20,7 @@ Powerup::Powerup(b2World* b2dWorld, int radius, float density, float bounce,
 
     collided = false;
     body->SetActive(false);
+    in_use = false;
 
     //Set collision categories and filter
     b2Filter filter;
@@ -43,12 +44,17 @@ void Powerup::Reset() {
     setPosition(x_hiding, y_hiding);
 }
 
-void Powerup::Drop(int x, int y, Type type, int color) {
+void Powerup::Prepare(int x, int y, Type type, int color) {
     this->color = color;
     this->type = type;
+    this->x = x;
+    this->y = y;
+}
 
-    setPosition(x, y);
+void Powerup::Drop() {
     body->SetActive(true);
+    setPosition(x, y);
+    in_use = true;
 }
 
 void Powerup::draw() {

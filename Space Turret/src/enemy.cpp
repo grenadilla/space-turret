@@ -35,6 +35,7 @@ Enemy::Enemy(b2World* b2World, int size, float density) {
 
     collided = false;
     body->SetActive(false);
+    in_use = false;
 }
 
 b2Vec2 Enemy::GetVelocity() {
@@ -64,11 +65,15 @@ void Enemy::Attack(int x, int y, int target_x, int target_y, int speed, int heal
     body->SetActive(true);
 }
 
-void Enemy::Damage(int damage) { 
+bool Enemy::Damage(int damage) { 
+    // Return whether the enemy was destroyed
 	health -= damage;
     if (health <= 0) {
         collided = true;
+        return true;
 	}
+
+    return false;
 }
 
 void Enemy::Reset() {
