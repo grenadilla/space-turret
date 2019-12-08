@@ -32,11 +32,14 @@ class ofApp : public ofBaseApp{
 		void windowResized(int w, int h);
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
+		
+	private:
+        void Preload();
+        void SpawnEnemy();
 
 		void contactStart(ofxBox2dContactArgs &e);
         void contactEnd(ofxBox2dContactArgs &e);
-		
-	private:
+
 		ofSoundPlayer background_music;
 
 		ofTrueTypeFont font;

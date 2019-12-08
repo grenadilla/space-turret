@@ -96,13 +96,13 @@ void ofApp::setup() {
     ofAddListener(box2d.contactStartEvents, this, &ofApp::contactStart);
     ofAddListener(box2d.contactEndEvents, this, &ofApp::contactEnd);
 
-    fuel_planet =
-        make_shared<Planet>(box2d.getWorld(), fuel_planet_coord.first,
-                            fuel_planet_coord.second, fuel_planet_radius, planet_color, &fuel_icon);
+    fuel_planet = make_shared<Planet>(
+        box2d.getWorld(), fuel_planet_coord.first, fuel_planet_coord.second,
+        fuel_planet_radius, planet_color, &fuel_icon);
 
-    ammo_planet =
-        make_shared<Planet>(box2d.getWorld(), ammo_planet_coord.first,
-                            ammo_planet_coord.second, ammo_planet_radius, planet_color, &ammo_icon);
+    ammo_planet = make_shared<Planet>(
+        box2d.getWorld(), ammo_planet_coord.first, ammo_planet_coord.second,
+        ammo_planet_radius, planet_color, &ammo_icon);
 
     player_ship = make_shared<Player>(
         box2d.getWorld(), player_start_coord.first, player_start_coord.second,
@@ -110,29 +110,7 @@ void ofApp::setup() {
         player_start_ammo, player_fuel_refresh, player_ammo_refresh, 1,
         player_density, player_bounce, player_friction);
 
-    // Set up bullets
-    bullet_index = 0;
-    Enemy::SetColors(enemy_colors);
-    for (int i = 0; i < total_bullets; i++) {
-        auto new_bullet = std::make_shared<Bullet>(box2d.getWorld(),
-                                                   bullet_height, bullet_width);
-        bullets.push_back(new_bullet);
-    }
-
-    // Set up enemies
-    enemy_index = 0;
-    for (int i = 0; i < total_enemies; i++) {
-        auto new_enemy = std::make_shared<Enemy>(box2d.getWorld(), enemy_size);
-        enemies.push_back(new_enemy);
-    }
-
-    // Set up powerups
-    powerup_index = 0;
-    for (int i = 0; i < total_powerups; i++) {
-        auto new_powerup =
-            std::make_shared<Powerup>(box2d.getWorld(), powerup_radius);
-        powerups.push_back(new_powerup);
-    }
+    Preload();
 
     difficulty_increase_timer = difficulty_increase_duration;
     spawn_rates.push_back(start_spawn_rate);
@@ -163,55 +141,8 @@ void ofApp::update() {
         difficulty_increase_timer = difficulty_increase_duration;
     }
 
-    // Spawn enemies
-    for (int i = 0; i < spawn_rates.size(); i++) {
-        // i is health
-        if (ofRandom(0, 1) <= spawn_rates[i]) {
-            int x;
-            int y;
-
-            // Select if on horizontal or vertical
-            if (ofRandom(0, 2) >= 1) {
-                // Horizontal
-                // Left or right
-                if (ofRandom(0, 2) >= 1) {
-                    x = spawn_boundary_prop * ofGetWidth();
-                } else {
-                    x = (1 - spawn_boundary_prop) * ofGetWidth();
-                }
-                y = ofRandom(0, 1) * ofGetHeight();
-            } else {
-                // Vertical
-                // Top or bottom
-                if (ofRandom(0, 2) >= 1) {
-                    y = spawn_boundary_prop * ofGetHeight();
-                } else {
-                    y = (1 - spawn_boundary_prop) * ofGetHeight();
-                }
-                x = ofRandom(0, 1) * ofGetWidth();
-            }
-
-            // Decide which planet to target
-            if (ofRandom(0, 2) >= 1) {
-                enemies[enemy_index]->Attack(x, y, fuel_planet->getPosition().x,
-                                             fuel_planet->getPosition().y,
-                                             enemy_speed, i);
-            } else {
-                enemies[enemy_index]->Attack(x, y, ammo_planet->getPosition().x,
-                                             ammo_planet->getPosition().y,
-                                             enemy_speed, i);
-            }
-
-            enemies[enemy_index]->Attack(x, y, ammo_planet->getPosition().x,
-                                         ammo_planet->getPosition().y,
-                                         enemy_speed, i + 1);
-
-            enemy_index++;
-            if (enemy_index >= enemies.size()) {
-                enemy_index = 0;
-            }
-        }
-    }
+    // Randomly spawn an enemy sometimes
+    SpawnEnemy();
 
     // Shooting
     if (bullet_timer > 0) {
@@ -486,6 +417,32 @@ void ofApp::draw() {
     fuel_planet->draw();
 }
 
+void ofApp::Preload() {
+    // Set up bullets
+    bullet_index = 0;
+    Enemy::SetColors(enemy_colors);
+    for (int i = 0; i < total_bullets; i++) {
+        auto new_bullet = std::make_shared<Bullet>(box2d.getWorld(),
+                                                   bullet_height, bullet_width);
+        bullets.push_back(new_bullet);
+    }
+
+    // Set up enemies
+    enemy_index = 0;
+    for (int i = 0; i < total_enemies; i++) {
+        auto new_enemy = std::make_shared<Enemy>(box2d.getWorld(), enemy_size);
+        enemies.push_back(new_enemy);
+    }
+
+    // Set up powerups
+    powerup_index = 0;
+    for (int i = 0; i < total_powerups; i++) {
+        auto new_powerup =
+            std::make_shared<Powerup>(box2d.getWorld(), powerup_radius);
+        powerups.push_back(new_powerup);
+    }
+}
+
 void ofApp::removePreloadedObjects() {
     // Remove bullets if out of bounds or collided
     for (auto bullet : bullets) {
@@ -509,6 +466,58 @@ void ofApp::removePreloadedObjects() {
     for (auto powerup : powerups) {
         if (powerup->DidCollide()) {
             powerup->Reset();
+        }
+    }
+}
+
+void ofApp::SpawnEnemy() {
+    // Spawn enemies
+    for (int i = 0; i < spawn_rates.size(); i++) {
+        // i is health
+        if (ofRandom(0, 1) <= spawn_rates[i]) {
+            int x;
+            int y;
+
+            // Select if on horizontal or vertical
+            if (ofRandom(0, 2) >= 1) {
+                // Horizontal
+                // Left or right
+                if (ofRandom(0, 2) >= 1) {
+                    x = spawn_boundary_prop * ofGetWidth();
+                } else {
+                    x = (1 - spawn_boundary_prop) * ofGetWidth();
+                }
+                y = ofRandom(0, 1) * ofGetHeight();
+            } else {
+                // Vertical
+                // Top or bottom
+                if (ofRandom(0, 2) >= 1) {
+                    y = spawn_boundary_prop * ofGetHeight();
+                } else {
+                    y = (1 - spawn_boundary_prop) * ofGetHeight();
+                }
+                x = ofRandom(0, 1) * ofGetWidth();
+            }
+
+            // Decide which planet to target
+            if (ofRandom(0, 2) >= 1) {
+                enemies[enemy_index]->Attack(x, y, fuel_planet->getPosition().x,
+                                             fuel_planet->getPosition().y,
+                                             enemy_speed, i);
+            } else {
+                enemies[enemy_index]->Attack(x, y, ammo_planet->getPosition().x,
+                                             ammo_planet->getPosition().y,
+                                             enemy_speed, i);
+            }
+
+            enemies[enemy_index]->Attack(x, y, ammo_planet->getPosition().x,
+                                         ammo_planet->getPosition().y,
+                                         enemy_speed, i + 1);
+
+            enemy_index++;
+            if (enemy_index >= enemies.size()) {
+                enemy_index = 0;
+            }
         }
     }
 }
