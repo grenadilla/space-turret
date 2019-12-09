@@ -15,12 +15,12 @@ constexpr int fuel_planet_radius = 60;
 constexpr int ammo_planet_radius = 60;
 constexpr int player_ship_radius = 20;
 
-const std::pair<int, int> fuel_planet_coord(700, 300);
-const std::pair<int, int> ammo_planet_coord(200, 300);
+const std::pair<int, int> fuel_planet_coord(700, 400);
+const std::pair<int, int> ammo_planet_coord(300, 300);
 const std::pair<int, int> player_start_coord(500, 300);
 
-constexpr int player_start_health = 3;
-constexpr int player_start_fuel = 2000;
+constexpr int player_start_health = 10;
+constexpr int player_start_fuel = 1000;
 constexpr int player_start_ammo = 10;
 constexpr int player_fuel_refresh = 3;
 constexpr int player_ammo_refresh = 1;
@@ -29,13 +29,13 @@ constexpr float player_density = 1;
 constexpr float player_bounce = 0.2;
 constexpr float player_friction = 0.1;
 
-constexpr int fuel_planet_gravity = 250;
-constexpr int ammo_planet_gravity = 250;
+constexpr int fuel_planet_gravity = 170;
+constexpr int ammo_planet_gravity = 170;
 constexpr int planet_color = 0x90d4e3;
 
 constexpr int max_speed = 10;
 constexpr int engine_force_mult = 20;
-constexpr int rotate_speed = 5;
+constexpr int rotate_speed = 4;
 
 constexpr int bullet_height = 10;
 constexpr int bullet_width = 4;
@@ -49,11 +49,11 @@ constexpr int bullet_interval = 10;
 int bullet_timer = 0;
 
 const std::vector<int> enemy_colors = {0x4fd1cf, 0x79d14f, 0xd46a0d, 0xbd2020};
-constexpr int enemy_size = 30;
+constexpr int enemy_size = 40;
 constexpr int total_enemies = 15;
 constexpr int enemy_speed = 1;
-constexpr double start_spawn_rate = 0.005;
-constexpr int difficulty_increase_duration = 10000;
+constexpr double start_spawn_rate = 0.003;
+constexpr int difficulty_increase_duration = 4000;
 constexpr double spawn_boundary_prop = 0.05;
 
 constexpr int total_powerups = 5;
@@ -630,11 +630,11 @@ void ofApp::SpawnPowerup(int x, int y) {
         type = Powerup::Type::Spray;
     }
 
-    else if (randNum < 0.33) {
+    else if (randNum < 0.3) {
         type = Powerup::Type::Fuel;
     }
 
-    else if (randNum >= 0.33 && randNum < 0.67) {
+    else if (randNum >= 0.3 && randNum < 0.7) {
         type = Powerup::Type::Health;
     }
 

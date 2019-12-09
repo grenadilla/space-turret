@@ -51,11 +51,27 @@ std::string Player::Upgrade(Powerup::Type type) {
     }
 
     if (type == Powerup::Type::Health) {
-        health += Powerup::health_restore;
-        if (health > max_health) {
-            health = max_health;
+        int heal;
+        int health_upgrade;
+        if (health + Powerup::health_restore > max_health) {
+            heal = max_health - health;
+        } else {
+            heal = Powerup::health_restore;
         }
-        return "Restore " + std::to_string(Powerup::health_restore) + " health";
+        health_upgrade = Powerup::health_restore - heal;
+
+        health += heal;
+        max_health += health_upgrade;
+        std::string message = "";
+        if (heal > 0) {
+            message += "Restore " + std::to_string(heal) +
+                       " health";
+        }
+        if (health_upgrade > 0) {
+            message += "Max health increased by " +
+                       std::to_string(health_upgrade) + " health";
+        }
+        return message;
     }
 
     if (type == Powerup::Type::Spray) {

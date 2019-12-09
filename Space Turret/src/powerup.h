@@ -14,7 +14,7 @@ class Powerup : public ofxBox2dCircle, public Preloaded {
     };
 
     static constexpr int health_restore = 1;
-    static constexpr int fuel_cap_increase = 500;
+    static constexpr int fuel_cap_increase = 250;
     static constexpr int ammo_cap_increase = 5;
 
     Powerup();
