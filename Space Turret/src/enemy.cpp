@@ -1,9 +1,8 @@
 #include "enemy.h"
+
 #include "calculations.h"
 
 #include <iostream>
-
-constexpr double kDegreeRadMult = PI / 180;
 
 constexpr int x_hiding = -20;
 constexpr int y_hiding = -20;
@@ -17,10 +16,10 @@ Enemy::Enemy() = default;
 Enemy::Enemy(b2World* b2World, int size, float density) {
     addVertex(glm::vec3(x_hiding, y_hiding, 0));
     addVertex(glm::vec3(
-        x_hiding + size * std::cos(-1 * tri_angle * kDegreeRadMult),
-        y_hiding + size * std::sin(-1 * tri_angle * kDegreeRadMult), 0));
-    addVertex(glm::vec3(x_hiding + size * std::cos(tri_angle * kDegreeRadMult),
-                        y_hiding + size * std::sin(tri_angle * kDegreeRadMult),
+        x_hiding + size * std::cos(-1 * tri_angle * calc::kDegreeRadMult),
+        y_hiding + size * std::sin(-1 * tri_angle * calc::kDegreeRadMult), 0));
+    addVertex(glm::vec3(x_hiding + size * std::cos(tri_angle * calc::kDegreeRadMult),
+                        y_hiding + size * std::sin(tri_angle * calc::kDegreeRadMult),
                         0));
 
     setPhysics(density, 0, 0);

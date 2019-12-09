@@ -2,9 +2,8 @@
 
 #include "identifier.h"
 #include "ofMain.h"
+#include "calculations.h"
 
-constexpr double kDegreeRadMult = PI / 180;
-constexpr int kLeftCornerDegree = 225;
 constexpr int hex_color = 0x90d4e3;
 
 Planet::Planet() = default;
@@ -33,10 +32,10 @@ void Planet::draw() {
 
     if (image != nullptr) {
         int square_side_length = getRadius() * 2 / std::sqrt(2);
-        image->draw(getPosition().x + getRadius() * std::cos(kLeftCornerDegree *
-                                                             kDegreeRadMult),
-                    getPosition().y + getRadius() * std::sin(kLeftCornerDegree *
-                                                             kDegreeRadMult),
+        image->draw(getPosition().x + getRadius() * std::cos(calc::kLeftCornerDegree *
+                                                             calc::kDegreeRadMult),
+                    getPosition().y + getRadius() * std::sin(calc::kLeftCornerDegree *
+                                                             calc::kDegreeRadMult),
                     square_side_length, square_side_length);
     }
 }

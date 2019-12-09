@@ -7,8 +7,6 @@
 #include "calculations.h"
 #include "identifier.h"
 
-constexpr double kDegreeRadMult = PI / 180;
-
 constexpr float fps = 60.0;
 
 constexpr int fuel_planet_radius = 60;
@@ -262,9 +260,8 @@ void ofApp::update() {
         // radians
         ofVec2f force_vec;
         force_vec.set(
-            std::cos(player_ship->getRotation() * kDegreeRadMult) * scalar_mult,
-            std::sin(player_ship->getRotation() * kDegreeRadMult) *
-                scalar_mult);
+            std::cos(player_ship->getRotation() * calc::kDegreeRadMult) * scalar_mult,
+            std::sin(player_ship->getRotation() * calc::kDegreeRadMult) * scalar_mult);
 
         player_ship->addForce(force_vec, 1);
         player_ship->SetFuel(player_ship->GetFuel() - 1);

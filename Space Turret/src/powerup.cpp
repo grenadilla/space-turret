@@ -1,9 +1,7 @@
 #include "powerup.h"
 
 #include "identifier.h"
-
-constexpr double kDegreeRadMult = PI / 180;
-constexpr int kLeftCornerDegree = 225;
+#include "calculations.h"
 
 constexpr int x_hiding = -20;
 constexpr int y_hiding = -40;
@@ -65,9 +63,9 @@ void Powerup::draw() {
     int square_side_length = getRadius() * 2 / std::sqrt(2);
     Powerup::images[type].draw(
         getPosition().x +
-            getRadius() * std::cos(kLeftCornerDegree * kDegreeRadMult),
+            getRadius() * std::cos(calc::kLeftCornerDegree * calc::kDegreeRadMult),
         getPosition().y +
-            getRadius() * std::sin(kLeftCornerDegree * kDegreeRadMult),
+            getRadius() * std::sin(calc::kLeftCornerDegree * calc::kDegreeRadMult),
         square_side_length, square_side_length);
 }
 

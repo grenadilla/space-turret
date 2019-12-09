@@ -1,11 +1,10 @@
 #include "bullet.h"
 
 #include "identifier.h"
+#include "calculations.h"
 #include "ofMain.h"
 
 #include <iostream>
-
-const double kDegreeRadMult = PI / 180;
 
 //Offscreen location where unused bullets should hide
 constexpr int x_hiding = -10;
@@ -36,15 +35,15 @@ Bullet::Bullet(b2World *b2World, int height, int width, float density) {
 
 void Bullet::Shoot(int x, int y, int player_ship_radius, float rotation,
 	int bullet_speed, int offset_angle) {
-    setPosition(x + std::cos((rotation + offset_angle) * kDegreeRadMult) * player_ship_radius,
-                y + std::sin((rotation + offset_angle) * kDegreeRadMult) * player_ship_radius);
+    setPosition(x + std::cos((rotation + offset_angle) * calc::kDegreeRadMult) * player_ship_radius,
+                y + std::sin((rotation + offset_angle) * calc::kDegreeRadMult) * player_ship_radius);
 
 	setRotation(rotation);
 
     // Set bullet velocity in direction of player rotation
     b2Vec2 bullet_velocity;
-    bullet_velocity.Set(std::cos(rotation * kDegreeRadMult) * bullet_speed,
-                        std::sin(rotation * kDegreeRadMult) * bullet_speed);
+    bullet_velocity.Set(std::cos(rotation * calc::kDegreeRadMult) * bullet_speed,
+                        std::sin(rotation * calc::kDegreeRadMult) * bullet_speed);
     body->SetLinearVelocity(bullet_velocity);
 
 	in_use = true;
