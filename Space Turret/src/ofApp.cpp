@@ -66,7 +66,9 @@ const std::map<Powerup::Type, int> powerup_colors = {
     std::make_pair(Powerup::Type::Spray, 0x34edc2)};
 
 constexpr int font_size = 12;
+constexpr int game_over_font_size = 40;
 constexpr int message_display_time = 180;
+const std::string game_over_message = "Game Over!";
 
 //--------------------------------------------------------------
 void ofApp::setup() {
@@ -142,56 +144,64 @@ void ofApp::setup() {
 
     difficulty_increase_timer = difficulty_increase_duration;
     spawn_rates.push_back(start_spawn_rate);
+
+    game_over = false;
 }
 
 //--------------------------------------------------------------
 void ofApp::update() {
-    box2d.update();
+    if (!game_over) {
+        box2d.update();
 
-    // Remove out of bounds or not in use preloaded objects
-    removePreloadedObjects();
+        // Remove out of bounds or not in use preloaded objects
+        removePreloadedObjects();
 
-    // Spawn powerups
-    if (powerup_to_drop != nullptr) {
-        powerup_to_drop->Drop();
-        powerup_to_drop = nullptr;
+        // Spawn powerups
+        if (powerup_to_drop != nullptr) {
+            powerup_to_drop->Drop();
+            powerup_to_drop = nullptr;
+        }
+
+        if (powerup_message_timer > 0) {
+            powerup_message_timer--;
+        }
+
+        UpdateSpawnRate();
+
+        // Randomly spawn an enemy sometimes
+        SpawnEnemy();
+
+        // Shooting
+        ShootBullet();
+
+        // Movement based on player input
+        MovePlayer();
+
+        // Wrap player around screen if their coordinates are offscreen
+        WrapAroundPlayer();
+
+        // Enforce max velocity
+        if (player_ship->getVelocity().length() > max_speed) {
+            // Rescale vectors using this equation:
+            // new_vector = required_length/old_magnitude * old_vector
+
+            player_ship->setVelocity(
+                player_ship->getVelocity() *
+                (max_speed / player_ship->getVelocity().length()));
+        }
+
+        AddGravity();
+
+        // Check which planet the player is "touching"
+        SetPlanetContact();
+
+        // Restock fuel and ammo if player is touching correct planet
+        RestockPlayer();
+
+        if (player_ship->GetHealth() == 0) {
+            game_over = true;
+        }
     }
-
-    if (powerup_message_timer > 0) {
-        powerup_message_timer--;
-    }
-
-    UpdateSpawnRate();
-
-    // Randomly spawn an enemy sometimes
-    SpawnEnemy();
-
-    // Shooting
-    ShootBullet();
-
-    // Movement based on player input
-    MovePlayer();
-
-    // Wrap player around screen if their coordinates are offscreen
-    WrapAroundPlayer();
-
-    // Enforce max velocity
-    if (player_ship->getVelocity().length() > max_speed) {
-        // Rescale vectors using this equation:
-        // new_vector = required_length/old_magnitude * old_vector
-
-        player_ship->setVelocity(
-            player_ship->getVelocity() *
-            (max_speed / player_ship->getVelocity().length()));
-    }
-
-    AddGravity();
-
-    // Check which planet the player is "touching"
-    SetPlanetContact();
-
-    // Restock fuel and ammo if player is touching correct planet
-    RestockPlayer();
 }
 
 void ofApp::contactStart(ofxBox2dContactArgs &e) {
@@ -317,51 +327,58 @@ void ofApp::contactEnd(ofxBox2dContactArgs &e) {
 //--------------------------------------------------------------
 void ofApp::draw() {
     ofSetHexColor(0x4AF626);
-    std::string message =
-        "Health: " + std::to_string(player_ship->GetHealth()) + "/" +
-        std::to_string(player_ship->GetMaxHealth());
-    font.drawString(message, 20, 20);
 
-    message = "Ammo: " + std::to_string(player_ship->GetAmmo()) + "/" +
-              std::to_string(player_ship->GetMaxAmmo());
-    font.drawString(message, 20, 40);
+    if (!game_over) {
+        std::string message =
+            "Health: " + std::to_string(player_ship->GetHealth()) + "/" +
+            std::to_string(player_ship->GetMaxHealth());
+        font.drawString(message, 20, 20);
 
-    message = "Fuel: " + std::to_string(player_ship->GetFuel() / 10) + "/" +
-              std::to_string(player_ship->GetMaxFuel() / 10);
-    font.drawString(message, 20, 60);
+        message = "Ammo: " + std::to_string(player_ship->GetAmmo()) + "/" +
+                  std::to_string(player_ship->GetMaxAmmo());
+        font.drawString(message, 20, 40);
 
-    message = "Attack: " + std::to_string(player_ship->GetAttack());
-    font.drawString(message, 20, 80);
+        message = "Fuel: " + std::to_string(player_ship->GetFuel() / 10) + "/" +
+                  std::to_string(player_ship->GetMaxFuel() / 10);
+        font.drawString(message, 20, 60);
 
-    if (powerup_message_timer > 0) {
-        font.drawString(powerup_message, 300, 40);
-    }
+        message = "Attack: " + std::to_string(player_ship->GetAttack());
+        font.drawString(message, 20, 80);
 
-    ofFill();
-
-    ofSetHexColor(0x800080);
-    player_ship->draw();
-
-    for (auto bullet : bullets) {
-        if (bullet->IsInUse()) {
-            bullet->draw();
+        if (powerup_message_timer > 0) {
+            font.drawString(powerup_message, 300, 40);
         }
-    }
 
-    for (auto enemy : enemies) {
-        if (enemy->IsInUse()) {
-            enemy->draw();
+        ofFill();
+
+        ofSetHexColor(0x800080);
+        player_ship->draw();
+
+        for (auto bullet : bullets) {
+            if (bullet->IsInUse()) {
+                bullet->draw();
+            }
         }
-    }
 
-    for (auto powerup : powerups) {
-        if (powerup->IsInUse()) {
-            powerup->draw();
+        for (auto enemy : enemies) {
+            if (enemy->IsInUse()) {
+                enemy->draw();
+            }
         }
-    }
 
-    ammo_planet->draw();
-    fuel_planet->draw();
+        for (auto powerup : powerups) {
+            if (powerup->IsInUse()) {
+                powerup->draw();
+            }
+        }
+
+        ammo_planet->draw();
+        fuel_planet->draw();
+    } else {
+        font.load("ibm_bios.ttf", game_over_font_size);
+        font.drawString(game_over_message, (ofGetWidth() - game_over_font_size * game_over_message.size()) / 2,
+                        (ofGetHeight() - game_over_font_size) / 2);
+    }
 }
 
 void ofApp::Preload() {

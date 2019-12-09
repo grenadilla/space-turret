@@ -65,3 +65,10 @@
 
  - **/12/7/19**
    - Implement upgrades for health, ammo, fuel, and attack type
+
+ - **12/8/19**
+   - Add sound effects
+   - Add powerup messages
+
+ - **12/9/19**
+   - Add check for game over

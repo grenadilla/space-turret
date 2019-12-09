@@ -51,6 +51,8 @@ class ofApp : public ofBaseApp{
 
 		ofxBox2d box2d;
 
+		bool game_over;
+
 		// Music and sound
 		ofSoundPlayer background_music;
         ofSoundPlayer laser_sound;
