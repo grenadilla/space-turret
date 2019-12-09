@@ -161,125 +161,19 @@ void ofApp::update() {
         powerup_message_timer--;
     }
 
-    difficulty_increase_timer--;
-
-    // Increase each spawn rate by stealing half of previous spawn rate
-    if (difficulty_increase_timer == 0) {
-        double counter = 0;
-        for (int i = spawn_rates.size() - 1; i >= 0; i--) {
-            counter = spawn_rates[i] / 2;
-            spawn_rates[i] /= 2;
-            if (i > 0) {
-                spawn_rates[i - 1] += counter;
-            }
-        }
-        spawn_rates.push_back(counter);
-        difficulty_increase_timer = difficulty_increase_duration;
-    }
+    UpdateSpawnRate();
 
     // Randomly spawn an enemy sometimes
     SpawnEnemy();
 
     // Shooting
-    if (bullet_timer > 0) {
-        bullet_timer--;
-    }
+    ShootBullet();
 
-    if (bullet_timer == 0 && player_ship->GetAmmo() > 0 &&
-        keys_pressed.count(' ')) {
-        laser_sound.play();
+    // Movement based on player input
+    MovePlayer();
 
-        auto bullet1 = bullets[bullet_index];
-        auto bullet2 = bullets[(bullet_index + 1) % bullets.size()];
-        auto bullet3 = bullets[(bullet_index + 2) % bullets.size()];
-
-        // Shooting patterns:
-        // 1 - Single bullet
-        // 2 - Two bullets side by side, symetric with the ship
-        // 3 - Three bullets, with middle one centered with ship
-        if (player_ship->GetSpray() == 1 || player_ship->GetSpray() == 3) {
-            bullet1->Shoot(player_ship->getPosition().x,
-                           player_ship->getPosition().y,
-                           player_ship->getRadius(), player_ship->getRotation(),
-                           bullet_speed);
-            bullet_index++;
-        }
-
-        if (player_ship->GetSpray() == 2) {
-            bullet1->Shoot(player_ship->getPosition().x,
-                           player_ship->getPosition().y,
-                           player_ship->getRadius(), player_ship->getRotation(),
-                           bullet_speed, -20);
-            bullet2->Shoot(player_ship->getPosition().x,
-                           player_ship->getPosition().y,
-                           player_ship->getRadius(), player_ship->getRotation(),
-                           bullet_speed, 20);
-            bullet_index += 2;
-        }
-
-        if (player_ship->GetSpray() == 3) {
-            bullet2->Shoot(player_ship->getPosition().x,
-                           player_ship->getPosition().y,
-                           player_ship->getRadius(), player_ship->getRotation(),
-                           bullet_speed, -30);
-            bullet3->Shoot(player_ship->getPosition().x,
-                           player_ship->getPosition().y,
-                           player_ship->getRadius(), player_ship->getRotation(),
-                           bullet_speed, 30);
-            bullet_index += 2;
-        }
-
-        bullet_index %= bullets.size();
-        bullet_timer = bullet_interval;
-        player_ship->SetAmmo(player_ship->GetAmmo() - 1);
-    }
-
-    // Movement
-    // std::set::count returns number of occurences, which is always zero
-    // or one, so we can use it as a boolean for easier readbility
-    // than using std::set::find and comparing to std::set::end
-    if (keys_pressed.count(OF_KEY_LEFT) || keys_pressed.count('a')) {
-        player_ship->setRotation(player_ship->getRotation() - rotate_speed);
-    }
-
-    if (keys_pressed.count(OF_KEY_RIGHT) || keys_pressed.count('d')) {
-        player_ship->setRotation(player_ship->getRotation() + rotate_speed);
-    }
-
-    if ((keys_pressed.count(OF_KEY_UP) || keys_pressed.count(OF_KEY_DOWN) ||
-         keys_pressed.count('w') || keys_pressed.count('s')) &&
-        player_ship->GetFuel() > 0) {
-        int scalar_mult;
-        if (keys_pressed.count(OF_KEY_UP) || keys_pressed.count('w')) {
-            scalar_mult = engine_force_mult;
-        } else if (keys_pressed.count(OF_KEY_DOWN) || keys_pressed.count('s')) {
-            scalar_mult = -1 * engine_force_mult;
-        }
-
-        // Note that rotation is measured by ofxBox2D in degrees instead of
-        // radians
-        ofVec2f force_vec;
-        force_vec.set(
-            std::cos(player_ship->getRotation() * calc::kDegreeRadMult) * scalar_mult,
-            std::sin(player_ship->getRotation() * calc::kDegreeRadMult) * scalar_mult);
-
-        player_ship->addForce(force_vec, 1);
-        player_ship->SetFuel(player_ship->GetFuel() - 1);
-    }
-
-    // Wrapping player around the screen
-    if (player_ship->getPosition().x < 0) {
-        player_ship->setPosition(ofGetWidth(), player_ship->getPosition().y);
-    }
-    if (player_ship->getPosition().y < 0) {
-        player_ship->setPosition(player_ship->getPosition().x, ofGetHeight());
-    }
-    if (player_ship->getPosition().x > ofGetWidth()) {
-        player_ship->setPosition(0, player_ship->getPosition().y);
-    }
-    if (player_ship->getPosition().y > ofGetHeight()) {
-        player_ship->setPosition(player_ship->getPosition().x, 0);
-    }
+    // Wrap player around screen if their coordinates are offscreen
+    WrapAroundPlayer();
 
     // Enforce max velocity
     if (player_ship->getVelocity().length() > max_speed) {
@@ -291,48 +185,13 @@ void ofApp::update() {
             (max_speed / player_ship->getVelocity().length()));
     }
 
-    // Calculate gravity force from the planets using inverse square law
-    ofVec2f fuel_gravity_force =
-        calc::gravity(fuel_planet_gravity, player_ship->getB2DPosition(),
-                      fuel_planet->getB2DPosition());
-    ofVec2f ammo_gravity_force =
-        calc::gravity(ammo_planet_gravity, player_ship->getB2DPosition(),
-                      ammo_planet->getB2DPosition());
-
-    player_ship->addForce(fuel_gravity_force + ammo_gravity_force, 1);
+    AddGravity();
 
     // Check which planet the player is "touching"
-    // The +1 after the radius is for a small margin of error
-    if (player_ship->getPosition().distance(fuel_planet->getPosition()) <=
-        player_ship->getRadius() + fuel_planet->getRadius() + 1) {
-        fuel_planet->SetTouchingPlayer(true);
-    } else {
-        fuel_planet->SetTouchingPlayer(false);
-    }
-
-    if (player_ship->getPosition().distance(ammo_planet->getPosition()) <=
-        player_ship->getRadius() + ammo_planet->getRadius() + 1) {
-        ammo_planet->SetTouchingPlayer(true);
-    } else {
-        ammo_planet->SetTouchingPlayer(false);
-    }
+    SetPlanetContact();
 
     // Restock fuel and ammo if player is touching correct planet
-    if (fuel_planet->IsTouchingPlayer()) {
-        int fuel = player_ship->GetFuel() + player_ship->GetFuelRefresh();
-        if (fuel > player_ship->GetMaxFuel()) {
-            fuel = player_ship->GetMaxFuel();
-        }
-        player_ship->SetFuel(fuel);
-    }
-
-    if (ammo_planet->IsTouchingPlayer()) {
-        int ammo = player_ship->GetAmmo() + player_ship->GetAmmoRefresh();
-        if (ammo > player_ship->GetMaxAmmo()) {
-            ammo = player_ship->GetMaxAmmo();
-        }
-        player_ship->SetAmmo(ammo);
-    }
+    RestockPlayer();
 }
 
 void ofApp::contactStart(ofxBox2dContactArgs &e) {
@@ -647,6 +506,178 @@ void ofApp::SpawnPowerup(int x, int y) {
     powerup_index++;
     if (powerup_index >= powerups.size()) {
         powerup_index = 0;
+    }
+}
+
+void ofApp::UpdateSpawnRate() {
+    difficulty_increase_timer--;
+
+    // Increase each spawn rate by stealing half of previous spawn rate
+    if (difficulty_increase_timer == 0) {
+        double counter = 0;
+        for (int i = spawn_rates.size() - 1; i >= 0; i--) {
+            counter = spawn_rates[i] / 2;
+            spawn_rates[i] /= 2;
+            if (i > 0) {
+                spawn_rates[i - 1] += counter;
+            }
+        }
+        spawn_rates.push_back(counter);
+        difficulty_increase_timer = difficulty_increase_duration;
+    }
+}
+
+void ofApp::MovePlayer() {
+    // std::set::count returns number of occurences, which is always zero
+    // or one, so we can use it as a boolean for easier readbility
+    // than using std::set::find and comparing to std::set::end
+    if (keys_pressed.count(OF_KEY_LEFT) || keys_pressed.count('a')) {
+        player_ship->setRotation(player_ship->getRotation() - rotate_speed);
+    }
+
+    if (keys_pressed.count(OF_KEY_RIGHT) || keys_pressed.count('d')) {
+        player_ship->setRotation(player_ship->getRotation() + rotate_speed);
+    }
+
+    if ((keys_pressed.count(OF_KEY_UP) || keys_pressed.count(OF_KEY_DOWN) ||
+         keys_pressed.count('w') || keys_pressed.count('s')) &&
+        player_ship->GetFuel() > 0) {
+        int scalar_mult;
+        if (keys_pressed.count(OF_KEY_UP) || keys_pressed.count('w')) {
+            scalar_mult = engine_force_mult;
+        } else if (keys_pressed.count(OF_KEY_DOWN) || keys_pressed.count('s')) {
+            scalar_mult = -1 * engine_force_mult;
+        }
+
+        // Note that rotation is measured by ofxBox2D in degrees instead of
+        // radians
+        ofVec2f force_vec;
+        force_vec.set(
+            std::cos(player_ship->getRotation() * calc::kDegreeRadMult) *
+                scalar_mult,
+            std::sin(player_ship->getRotation() * calc::kDegreeRadMult) *
+                scalar_mult);
+
+        player_ship->addForce(force_vec, 1);
+        player_ship->SetFuel(player_ship->GetFuel() - 1);
+    }
+}
+
+void ofApp::ShootBullet() {
+    if (bullet_timer > 0) {
+        bullet_timer--;
+    }
+
+    if (bullet_timer == 0 && player_ship->GetAmmo() > 0 &&
+        keys_pressed.count(' ')) {
+        laser_sound.play();
+
+        auto bullet1 = bullets[bullet_index];
+        auto bullet2 = bullets[(bullet_index + 1) % bullets.size()];
+        auto bullet3 = bullets[(bullet_index + 2) % bullets.size()];
+
+        // Shooting patterns:
+        // 1 - Single bullet
+        // 2 - Two bullets side by side, symetric with the ship
+        // 3 - Three bullets, with middle one centered with ship
+        if (player_ship->GetSpray() == 1 || player_ship->GetSpray() == 3) {
+            bullet1->Shoot(player_ship->getPosition().x,
+                           player_ship->getPosition().y,
+                           player_ship->getRadius(), player_ship->getRotation(),
+                           bullet_speed);
+            bullet_index++;
+        }
+
+        if (player_ship->GetSpray() == 2) {
+            bullet1->Shoot(player_ship->getPosition().x,
+                           player_ship->getPosition().y,
+                           player_ship->getRadius(), player_ship->getRotation(),
+                           bullet_speed, -20);
+            bullet2->Shoot(player_ship->getPosition().x,
+                           player_ship->getPosition().y,
+                           player_ship->getRadius(), player_ship->getRotation(),
+                           bullet_speed, 20);
+            bullet_index += 2;
+        }
+
+        if (player_ship->GetSpray() == 3) {
+            bullet2->Shoot(player_ship->getPosition().x,
+                           player_ship->getPosition().y,
+                           player_ship->getRadius(), player_ship->getRotation(),
+                           bullet_speed, -30);
+            bullet3->Shoot(player_ship->getPosition().x,
+                           player_ship->getPosition().y,
+                           player_ship->getRadius(), player_ship->getRotation(),
+                           bullet_speed, 30);
+            bullet_index += 2;
+        }
+
+        bullet_index %= bullets.size();
+        bullet_timer = bullet_interval;
+        player_ship->SetAmmo(player_ship->GetAmmo() - 1);
+    }
+}
+
+void ofApp::AddGravity() {
+    // Calculate gravity force from the planets using inverse square law
+    ofVec2f fuel_gravity_force =
+        calc::gravity(fuel_planet_gravity, player_ship->getB2DPosition(),
+                      fuel_planet->getB2DPosition());
+    ofVec2f ammo_gravity_force =
+        calc::gravity(ammo_planet_gravity, player_ship->getB2DPosition(),
+                      ammo_planet->getB2DPosition());
+
+    player_ship->addForce(fuel_gravity_force + ammo_gravity_force, 1);
+}
+
+void ofApp::WrapAroundPlayer() {
+    // Wrapping player around the screen
+    if (player_ship->getPosition().x < 0) {
+        player_ship->setPosition(ofGetWidth(), player_ship->getPosition().y);
+    }
+    if (player_ship->getPosition().y < 0) {
+        player_ship->setPosition(player_ship->getPosition().x, ofGetHeight());
+    }
+    if (player_ship->getPosition().x > ofGetWidth()) {
+        player_ship->setPosition(0, player_ship->getPosition().y);
+    }
+    if (player_ship->getPosition().y > ofGetHeight()) {
+        player_ship->setPosition(player_ship->getPosition().x, 0);
+    }
+}
+
+void ofApp::SetPlanetContact() {
+    // The +1 after the radius is for a small margin of error
+    if (player_ship->getPosition().distance(fuel_planet->getPosition()) <=
+        player_ship->getRadius() + fuel_planet->getRadius() + 1) {
+        fuel_planet->SetTouchingPlayer(true);
+    } else {
+        fuel_planet->SetTouchingPlayer(false);
+    }
+
+    if (player_ship->getPosition().distance(ammo_planet->getPosition()) <=
+        player_ship->getRadius() + ammo_planet->getRadius() + 1) {
+        ammo_planet->SetTouchingPlayer(true);
+    } else {
+        ammo_planet->SetTouchingPlayer(false);
+    }
+}
+
+void ofApp::RestockPlayer() {
+    if (fuel_planet->IsTouchingPlayer()) {
+        int fuel = player_ship->GetFuel() + player_ship->GetFuelRefresh();
+        if (fuel > player_ship->GetMaxFuel()) {
+            fuel = player_ship->GetMaxFuel();
+        }
+        player_ship->SetFuel(fuel);
+    }
+
+    if (ammo_planet->IsTouchingPlayer()) {
+        int ammo = player_ship->GetAmmo() + player_ship->GetAmmoRefresh();
+        if (ammo > player_ship->GetMaxAmmo()) {
+            ammo = player_ship->GetMaxAmmo();
+        }
+        player_ship->SetAmmo(ammo);
     }
 }
 

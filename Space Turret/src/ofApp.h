@@ -38,6 +38,13 @@ class ofApp : public ofBaseApp{
         void Preload();
         void SpawnEnemy();
         void SpawnPowerup(int x, int y);
+        void UpdateSpawnRate();
+        void ShootBullet();
+        void MovePlayer();
+        void AddGravity();
+        void WrapAroundPlayer();
+        void SetPlanetContact();
+        void RestockPlayer();
 
 		void contactStart(ofxBox2dContactArgs &e);
         void contactEnd(ofxBox2dContactArgs &e);
