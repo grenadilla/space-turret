@@ -41,3 +41,21 @@ Space Turret is a game I made for the CS 126 final project at the University of 
 Your objective is to defend the two planets from the evil triangular spaceships. 
 Be careful - the planets have strong gravity fields and you have limited fuel and ammo capacity that can only be replenished on the correct planet.
 Collect powerups to defeat enemies more easily, and make sure they don't hit you or any planet!
+
+## Credits
+
+### Images
+[Blast](https://game-icons.net/1x1/sbed/blast.html) - sbed\
+[Ion Cannon Blast](https://game-icons.net/1x1/lorc/ion-cannon-blast.html) - Lorc\
+[Heart Plus](https://game-icons.net/1x1/zeromancer/heart-plus.html) - Zeromancer\
+[Fuel Tank](https://game-icons.net/1x1/delapouite/fuel-tank.html) - Delapouite\
+[Oil Drum](https://game-icons.net/1x1/skoll/oil-drum.html) - Skoll\
+[Heavy Bullets](https://game-icons.net/1x1/delapouite/heavy-bullets.html) - Delapouite\
+[Reload Gun Barrel](https://game-icons.net/1x1/delapouite/reload-gun-barrel.html) - Delapouite
+
+### Sound
+[Tilt](https://soundcloud.com/avaren/tilt?in=avaren/sets/precipice-ep) - Avaren\
+[Retro Punch](https://freesound.org/people/damnsatinist/sounds/493915/) - damnsatinist\
+[Retro Explosion](https://freesound.org/people/stumpbutt/sounds/381686/) - stumpbutt\
+[Powerup](https://freesound.org/people/JustInvoke/sounds/138485/) - JustInvoke\
+[Laser Shot Silenced](https://freesound.org/people/bubaproducer/sounds/151022/) - bubaproducer

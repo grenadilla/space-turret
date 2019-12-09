@@ -72,3 +72,4 @@
 
  - **12/9/19**
    - Add check for game over
+   - Create README
