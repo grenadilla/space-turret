@@ -24,9 +24,6 @@ Powerup::Powerup(b2World* b2dWorld, int radius, float density, float bounce,
     b2Filter filter;
     filter.maskBits = Identifier::player_category;
     setFilterData(filter);
-
-    // Use below to prevent collision between powerups and enemies
-    // fixture.filter.groupIndex =
 }
 
 void Powerup::LoadImages(std::map<Powerup::Type, ofImage> images) {
@@ -60,6 +57,7 @@ void Powerup::draw() {
     ofSetHexColor(color);
     ofDrawCircle(getPosition().x, getPosition().y, getRadius());
 
+    // Draw powerup icon. All powerups have an icon, unlike planets which don't need one
     int square_side_length = getRadius() * 2 / std::sqrt(2);
     Powerup::images[type].draw(
         getPosition().x +

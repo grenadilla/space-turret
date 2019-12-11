@@ -79,6 +79,7 @@ void ofApp::setup() {
     background_music.setLoop(true);
     damage_sound.setVolume(0.7);
 
+    // Load sound effects
     laser_sound.load("sounds/laser.wav");
     laser_sound.setMultiPlay(true);
     laser_sound.setVolume(0.2);
@@ -114,6 +115,7 @@ void ofApp::setup() {
     fuel_icon.load("images/fuel-tank.png");
     ammo_icon.load("images/reload-gun-barrel.png");
 
+    // Set up Box2D
     ofSetVerticalSync(true);
     ofBackground(0, 0, 0);
     ofSetLogLevel(OF_LOG_NOTICE);
@@ -168,11 +170,7 @@ void ofApp::update() {
         }
 
         UpdateSpawnRate();
-
-        // Randomly spawn an enemy sometimes
         SpawnEnemy();
-
-        // Shooting
         ShootBullet();
 
         // Movement based on player input
@@ -209,6 +207,7 @@ void ofApp::contactStart(ofxBox2dContactArgs &e) {
     Identifier *id_a = static_cast<Identifier *>(e.a->GetBody()->GetUserData());
     Identifier *id_b = static_cast<Identifier *>(e.b->GetBody()->GetUserData());
 
+    // Bullet + Planet, bullet simply disappears
     if (id_a->GetType() == Identifier::ShapeType::Bullet &&
         id_b->GetType() == Identifier::ShapeType::Planet) {
         shared_ptr<Bullet> bullet =
@@ -223,6 +222,7 @@ void ofApp::contactStart(ofxBox2dContactArgs &e) {
         bullet->SetCollided(true);
     }
 
+    // Enemy + Planet, player loses health
     if (id_a->GetType() == Identifier::ShapeType::Enemy &&
         id_b->GetType() == Identifier::ShapeType::Planet) {
         shared_ptr<Enemy> enemy =
@@ -241,6 +241,7 @@ void ofApp::contactStart(ofxBox2dContactArgs &e) {
         damage_sound.play();
     }
 
+    // Bullet + Enemy, bullet disappears
     if (id_a->GetType() == Identifier::ShapeType::Bullet &&
         id_b->GetType() == Identifier::ShapeType::Enemy) {
         shared_ptr<Bullet> bullet =
@@ -267,6 +268,7 @@ void ofApp::contactStart(ofxBox2dContactArgs &e) {
         }
     }
 
+    // Player + Enemy, player loses health
     if (id_a->GetType() == Identifier::ShapeType::Player &&
         id_b->GetType() == Identifier::ShapeType::Enemy) {
         shared_ptr<Enemy> enemy =
@@ -285,6 +287,7 @@ void ofApp::contactStart(ofxBox2dContactArgs &e) {
         damage_sound.play();
     }
 
+    // Player + Powerup, player gains powerup
     if (id_a->GetType() == Identifier::ShapeType::Player &&
         id_b->GetType() == Identifier::ShapeType::Powerup) {
         shared_ptr<Powerup> powerup =
@@ -310,6 +313,7 @@ void ofApp::contactEnd(ofxBox2dContactArgs &e) {
     Identifier *id_a = static_cast<Identifier *>(e.a->GetBody()->GetUserData());
     Identifier *id_b = static_cast<Identifier *>(e.b->GetBody()->GetUserData());
 
+    // Reset bullet velocity after colliding with enemy
     if (id_a->GetType() == Identifier::ShapeType::Bullet &&
         id_b->GetType() == Identifier::ShapeType::Enemy) {
         shared_ptr<Enemy> enemy =
@@ -330,6 +334,7 @@ void ofApp::draw() {
     ofSetHexColor(0x4AF626);
 
     if (!game_over) {
+        // Draw player stat info
         std::string message =
             "Health: " + std::to_string(player_ship->GetHealth()) + "/" +
             std::to_string(player_ship->GetMaxHealth());
@@ -409,7 +414,7 @@ void ofApp::Preload() {
 }
 
 void ofApp::removePreloadedObjects() {
-    // Remove bullets if out of bounds or collided
+    // Remove preloaded objects if out of bounds or collided
     for (auto bullet : bullets) {
         ofVec2f position = bullet->getPosition();
         if (position.x < 0 || position.x > ofGetWindowWidth() ||
@@ -436,10 +441,8 @@ void ofApp::removePreloadedObjects() {
 }
 
 void ofApp::SpawnEnemy() {
-    // Spawn enemies
-    for (int i = 0; i < spawn_rates.size(); i++) {
-        // i is health
-        if (ofRandom(0, 1) <= spawn_rates[i]) {
+    for (int health = 0; health < spawn_rates.size(); health++) {
+        if (ofRandom(0, 1) <= spawn_rates[health]) {
             int x;
             int y;
 
@@ -468,11 +471,11 @@ void ofApp::SpawnEnemy() {
             if (ofRandom(0, 1) >= 0.5) {
                 enemies[enemy_index]->Attack(x, y, fuel_planet->getPosition().x,
                                              fuel_planet->getPosition().y,
-                                             enemy_speed, i + 1);
+                                             enemy_speed, health + 1);
             } else {
                 enemies[enemy_index]->Attack(x, y, ammo_planet->getPosition().x,
                                              ammo_planet->getPosition().y,
-                                             enemy_speed, i + 1);
+                                             enemy_speed, health + 1);
             }
 
             enemy_index++;
@@ -636,10 +639,10 @@ void ofApp::ShootBullet() {
 void ofApp::AddGravity() {
     // Calculate gravity force from the planets using inverse square law
     ofVec2f fuel_gravity_force =
-        calc::gravity(fuel_planet_gravity, player_ship->getB2DPosition(),
+        calc::Gravity(fuel_planet_gravity, player_ship->getB2DPosition(),
                       fuel_planet->getB2DPosition());
     ofVec2f ammo_gravity_force =
-        calc::gravity(ammo_planet_gravity, player_ship->getB2DPosition(),
+        calc::Gravity(ammo_planet_gravity, player_ship->getB2DPosition(),
                       ammo_planet->getB2DPosition());
 
     player_ship->addForce(fuel_gravity_force + ammo_gravity_force, 1);

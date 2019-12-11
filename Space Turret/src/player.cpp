@@ -51,6 +51,9 @@ std::string Player::Upgrade(Powerup::Type type) {
     }
 
     if (type == Powerup::Type::Health) {
+        // Health powerup restores health or increases health capacity
+        // if health is already max
+
         int heal;
         int health_upgrade;
         if (health + Powerup::health_restore > max_health) {
@@ -75,6 +78,8 @@ std::string Player::Upgrade(Powerup::Type type) {
     }
 
     if (type == Powerup::Type::Spray) {
+        // Spray is how bullets are shot from the ship
+        // 1 bullet, 2 bullet, etc.
         spray++;
         if (spray > max_spray) {
             spray = max_spray;

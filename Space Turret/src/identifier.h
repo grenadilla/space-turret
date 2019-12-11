@@ -2,6 +2,10 @@
 
 #include "ofxBox2d.h"
 
+// Identifiers are used for collision detection purposes
+// They hold an enum representing type of the object
+// and a pointer back to the object so we can get it back in the collision event listener
+
 class Identifier {
    public:
     enum class ShapeType {

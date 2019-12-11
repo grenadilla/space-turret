@@ -10,7 +10,7 @@ TEST_CASE("Gravity calculations work") {
         double multiplier = 250;
 
         ofVec2f calculated_gravity =
-            calc::gravity(multiplier, player_position, planet_position);
+            calc::Gravity(multiplier, player_position, planet_position);
 
         ofVec2f expected_gravity(6, 8);
 
@@ -24,7 +24,7 @@ TEST_CASE("Gravity calculations work") {
         double multiplier = 62500;
 
         ofVec2f calculated_gravity =
-            calc::gravity(multiplier, player_position, planet_position);
+            calc::Gravity(multiplier, player_position, planet_position);
 
         ofVec2f expected_gravity(28, 96);
 

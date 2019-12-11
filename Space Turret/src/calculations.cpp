@@ -6,7 +6,7 @@ const double kDegreeRadMult = PI / 180;
 constexpr int kDegreeInCircle = 360;
 
 namespace calc {
-	ofVec2f gravity(double multiplier, ofVec2f player_position,
+	ofVec2f Gravity(double multiplier, ofVec2f player_position,
 		ofVec2f planet_position) {
 		ofVec2f gravity_force = planet_position - player_position;
             gravity_force =

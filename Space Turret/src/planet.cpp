@@ -30,6 +30,7 @@ void Planet::draw() {
     ofSetHexColor(color);
     ofDrawCircle(getPosition().x, getPosition().y, getRadius());
 
+    // Draw planet icon
     if (image != nullptr) {
         int square_side_length = getRadius() * 2 / std::sqrt(2);
         image->draw(getPosition().x + getRadius() * std::cos(calc::kLeftCornerDegree *
