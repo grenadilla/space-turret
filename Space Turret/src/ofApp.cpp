@@ -51,6 +51,7 @@ constexpr int enemy_size = 40;
 constexpr int total_enemies = 15;
 constexpr int enemy_speed = 1;
 constexpr double start_spawn_rate = 0.003;
+constexpr double spawn_rate_increase = 0.0005;
 constexpr int difficulty_increase_duration = 4000;
 constexpr double spawn_boundary_prop = 0.05;
 
@@ -464,19 +465,15 @@ void ofApp::SpawnEnemy() {
             }
 
             // Decide which planet to target
-            if (ofRandom(0, 2) >= 1) {
+            if (ofRandom(0, 1) >= 0.5) {
                 enemies[enemy_index]->Attack(x, y, fuel_planet->getPosition().x,
                                              fuel_planet->getPosition().y,
-                                             enemy_speed, i);
+                                             enemy_speed, i + 1);
             } else {
                 enemies[enemy_index]->Attack(x, y, ammo_planet->getPosition().x,
                                              ammo_planet->getPosition().y,
-                                             enemy_speed, i);
+                                             enemy_speed, i + 1);
             }
-
-            enemies[enemy_index]->Attack(x, y, ammo_planet->getPosition().x,
-                                         ammo_planet->getPosition().y,
-                                         enemy_speed, i + 1);
 
             enemy_index++;
             if (enemy_index >= enemies.size()) {
@@ -531,6 +528,7 @@ void ofApp::UpdateSpawnRate() {
 
     // Increase each spawn rate by stealing half of previous spawn rate
     if (difficulty_increase_timer == 0) {
+        spawn_rates[0] += spawn_rate_increase;
         double counter = 0;
         for (int i = spawn_rates.size() - 1; i >= 0; i--) {
             counter = spawn_rates[i] / 2;
