@@ -42,9 +42,8 @@ constexpr int bullet_width = 4;
 constexpr int total_bullets = 30;
 constexpr int bullet_speed = 20;
 
-// Maybe track time since last bullet fired
 constexpr int bullet_interval = 10;
-int bullet_timer = 0;
+constexpr int reload_inverval = 20;
 
 const std::vector<int> enemy_colors = {0x4fd1cf, 0x79d14f, 0xd46a0d, 0xbd2020};
 constexpr int enemy_size = 40;
@@ -148,6 +147,9 @@ void ofApp::setup() {
     difficulty_increase_timer = difficulty_increase_duration;
     spawn_rates.push_back(start_spawn_rate);
 
+    bullet_timer = 0;
+    reload_timer = 0;
+
     game_over = false;
 }
 
@@ -167,6 +169,10 @@ void ofApp::update() {
 
         if (powerup_message_timer > 0) {
             powerup_message_timer--;
+        }
+
+        if (reload_timer > 0) {
+            reload_timer--;
         }
 
         UpdateSpawnRate();
@@ -691,11 +697,14 @@ void ofApp::RestockPlayer() {
     }
 
     if (ammo_planet->IsTouchingPlayer()) {
-        int ammo = player_ship->GetAmmo() + player_ship->GetAmmoRefresh();
-        if (ammo > player_ship->GetMaxAmmo()) {
-            ammo = player_ship->GetMaxAmmo();
+        if (reload_timer == 0) {
+            int ammo = player_ship->GetAmmo() + player_ship->GetAmmoRefresh();
+            if (ammo > player_ship->GetMaxAmmo()) {
+                ammo = player_ship->GetMaxAmmo();
+            }
+            player_ship->SetAmmo(ammo);
+            reload_timer = reload_inverval;
         }
-        player_ship->SetAmmo(ammo);
     }
 }
 

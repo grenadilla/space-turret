@@ -95,5 +95,8 @@ class ofApp : public ofBaseApp{
 		int difficulty_increase_timer;
         std::vector<double> spawn_rates;
 
+		int bullet_timer;
+        int reload_timer;
+
 		void removePreloadedObjects();
 };
