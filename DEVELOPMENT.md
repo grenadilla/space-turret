@@ -73,3 +73,7 @@
  - **12/9/19**
    - Add check for game over
    - Create README
+
+ - **12/11/19**
+   - Fix enemies colliding with each other
+   - Add bullet reload timer
