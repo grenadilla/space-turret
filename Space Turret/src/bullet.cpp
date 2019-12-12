@@ -23,6 +23,7 @@ Bullet::Bullet(b2World *b2World, int height, int width, float density) {
     body->SetBullet(true);
 
     b2Filter filter;
+    filter.categoryBits = Identifier::bullet_category;
     filter.maskBits = Identifier::enemy_category | Identifier::planet_category;
     setFilterData(filter);
 

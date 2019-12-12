@@ -23,6 +23,7 @@ class Identifier {
     static const int player_category = 0x0002;
     static const int enemy_category = 0x0004;
     static const int planet_category = 0x0008;
+    static const int bullet_category = 0x0010;
 
    private:
     ShapeType type;

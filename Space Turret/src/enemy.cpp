@@ -28,6 +28,7 @@ Enemy::Enemy(b2World* b2World, int size, float density) {
 
     b2Filter filter;
     filter.categoryBits = Identifier::enemy_category;
+    filter.maskBits = Identifier::planet_category | Identifier::player_category | Identifier::bullet_category;
     setFilterData(filter);
 
     setData(new Identifier(Identifier::ShapeType::Enemy, this));
